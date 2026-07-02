@@ -31,6 +31,14 @@
 - Every non-empty node should answer a role question for the specific event, not for the whole document.
 - Do not borrow `why` or `how` from a neighboring event unless a relation hyperedge supports the connection.
 
+## Diagram Checks
+
+- If a Mermaid diagram is requested, it must not replace 5W1H extraction.
+- Every displayed root event must show six 5W1H roles in the diagram or in an adjacent 5W1H table.
+- Use `missing` for absent roles; do not silently omit absent roles.
+- Do not use generic background nodes such as `B1` as substitutes for event frames or 5W1H nodes.
+- For many clusters, split diagrams into batches rather than deleting 5W1H roles.
+
 ## Relation Checks
 
 - Every relation hyperedge references existing source and target events.
@@ -58,3 +66,4 @@
 - Omitting evidence IDs.
 - Choosing a side detail as the cluster root.
 - Filling missing roles from background knowledge instead of source evidence.
+- Drawing only event clusters/relations while omitting 5W1H roles.

@@ -153,14 +153,24 @@ Do not invent relation names unless the user explicitly asks for an extension. I
 
 ## Diagram Mode
 
-When the user asks to "draw", "show the graph", "paint it", or "make it readable", output Mermaid first and keep JSON secondary or omit it if not requested.
+When the user asks to "draw", "show the graph", "paint it", or "make it readable", do not let the diagram replace 5W1H extraction.
+
+Output order:
+
+1. A compact 5W1H table for every displayed root event.
+2. Mermaid diagram showing event clusters, root events, and the six 5W1H role nodes for each displayed root event.
+3. Optional relation hyperedges between events.
+
+If the document contains many clusters, split diagrams into batches or show a compact overview plus per-cluster 5W1H diagrams. Do not omit 5W1H roles just to keep one diagram small.
 
 In diagrams:
 
 - Use `EC*` for event clusters.
 - Use `E*` for events.
-- Show only high-value 5W1H nodes for the root event unless the user asks for full detail.
+- Show six 5W1H role nodes for each displayed root event: `who`, `what`, `when`, `where`, `why`, `how`.
+- Use `missing` when a 5W1H role is not stated.
 - Use relation labels from the controlled vocabulary.
+- Do not use generic `B*` background nodes as a replacement for event nodes or 5W1H nodes.
 
 ## Non-Negotiables
 
@@ -168,6 +178,7 @@ In diagrams:
 - Do not split every sentence into an event.
 - Do not create event relations without evidence.
 - Do not attach 5W1H nodes directly to clusters; attach them to events through `event_hyperedges`.
+- Do not draw an event relation diagram without also showing the relevant event's 5W1H roles.
 - Do not use `reports`; use `discloses` for disclosure/reporting relations.
 - Do not promote quantities, equipment features, or quotes to standalone events unless they are central claims or states.
 - Do not fill 5W1H from world knowledge; use stated or directly implied evidence only.
