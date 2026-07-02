@@ -12,14 +12,16 @@
 4. 复制后检查目标路径中是否存在：
    - `ceh-5w1h/SKILL.md`
    - `ceh-5w1h/references/schema.md`
+   - `ceh-5w1h/references/algorithm-playbook.md`
    - `ceh-5w1h/scripts/validate_ceh_output.py`
+   - `ceh-5w1h/scripts/compare_ceh_outputs.py`
 5. 不要删除或覆盖其他 skill。
-6. 如果目标目录中已经存在 `ceh-5w1h/`，请先告诉我，再覆盖安装。
-7. 安装完成后，告诉我应该新开一个 Codex 线程，并用下面的方式调用：
+6. 如果目标目录中已经存在 `ceh-5w1h/`，覆盖前先告诉我。
+7. 安装完成后，提醒我新开一个 Codex 线程并使用：
 
 ```text
 $ceh-5w1h 把下面文本抽成事件簇 5W1H 知识超图：
 ...
 ```
 
-请直接执行安装，并在最后给出安装路径和检查结果。
+请执行安装，并报告最终安装路径和检查结果。

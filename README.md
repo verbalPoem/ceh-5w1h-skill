@@ -2,10 +2,10 @@
 
 语言：中文 | [English](README.en.md)
 
-`ceh-5w1h` 是一个面向 Codex 的事件簇 5W1H 知识超图抽取 skill。它的目标不是把文本拆成一张扁平 5W1H 表，而是把新闻、军事报道、政策文本、事故通报和技术报告组织成：
+`ceh-5w1h` 是一个面向 Codex 的事件簇 5W1H 知识超图抽取 skill。它的目标不是把文本拆成一张扁平 5W1H 表，而是把新闻、军事报道、政策文本、事故通报和技术报告组织成事件中心的知识超图。
 
 ```text
-Document -> Event Clusters -> Events -> 5W1H Event Hyperedges -> Event Relation Hyperedges
+Document -> Event Clusters -> Root Events -> Candidate Spans -> Skeletons -> 5W1H Event Hyperedges -> Event Relation Hyperedges -> Stability Check
 ```
 
 ## 核心思想
@@ -33,6 +33,16 @@ S1 / S2 = 证据句
 }
 ```
 
+## 方法增强
+
+当前版本把多个信息抽取思路转成了可执行规则：
+
+- 主事件优先：先找每个事件簇的 `root_event`，避免把新闻拆成碎片化 5W1H。
+- 粗到细超边构建：先建 `who -> predicate -> what` 骨架，再补时间、地点、原因、方式等限定信息。
+- QA-style 角色抽取：围绕单个事件逐一追问 who / what / when / where / why / how，并保留 `tag_start` 与 `tag_end`。
+- 文档级事件记忆：处理跨句分散的事件论元，避免只看单句导致漏抽。
+- 稳定性审计：比较多轮输出里的 stable / unstable / missed 结构，提高高置信抽取质量。
+
 ## 关系词表
 
 默认事件关系使用固定词表：
@@ -57,7 +67,13 @@ contrasts_with  对比
 |   |-- SKILL.md
 |   |-- agents/
 |   |-- references/
+|   |   |-- algorithm-playbook.md
+|   |   |-- schema.md
+|   |   |-- state-machine.md
+|   |   `-- ...
 |   `-- scripts/
+|       |-- validate_ceh_output.py
+|       `-- compare_ceh_outputs.py
 |-- examples/
 |   `-- ceh-minimal-output.json
 |-- docs/
@@ -106,6 +122,12 @@ python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
 
 ```text
 VALID: 1 cluster(s), 2 event(s), 2 event hyperedge(s), 1 relation hyperedge(s)
+```
+
+比较多轮抽取稳定性：
+
+```bash
+python ceh-5w1h/scripts/compare_ceh_outputs.py pass1.json pass2.json pass3.json
 ```
 
 ## 方法定位

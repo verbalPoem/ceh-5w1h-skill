@@ -57,3 +57,13 @@ Expected:
 ```text
 VALID: 1 cluster(s), 2 event(s), 2 event hyperedge(s), 1 relation hyperedge(s)
 ```
+
+## Compare Stability
+
+If you extract the same text multiple times and save each pass as JSON, run:
+
+```bash
+python ceh-5w1h/scripts/compare_ceh_outputs.py pass1.json pass2.json pass3.json
+```
+
+The script lists stable, unstable, and one-pass-only events, clusters, relations, and 5W1H role nodes.

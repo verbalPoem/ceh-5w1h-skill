@@ -12,7 +12,9 @@ Requirements:
 4. After copying, check that these files exist in the target path:
    - `ceh-5w1h/SKILL.md`
    - `ceh-5w1h/references/schema.md`
+   - `ceh-5w1h/references/algorithm-playbook.md`
    - `ceh-5w1h/scripts/validate_ceh_output.py`
+   - `ceh-5w1h/scripts/compare_ceh_outputs.py`
 5. Do not delete or overwrite any other skill.
 6. If `ceh-5w1h/` already exists in the target directory, tell me before overwriting it.
 7. After installation, tell me to start a new Codex thread and invoke:

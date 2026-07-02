@@ -18,7 +18,9 @@
 - Every event has a short factual summary.
 - Every event has one event hyperedge.
 - Do not promote every technical detail to an event.
+- Do not promote quantities, equipment specs, or quotation fragments to events unless they express a central state, action, or claim.
 - Mark only root or central events as `main: true`.
+- Root events should have high cluster explanation power, not merely early position.
 
 ## 5W1H Checks
 
@@ -26,6 +28,8 @@
 - Every event hyperedge has exactly six node groups: `who`, `what`, `when`, `where`, `why`, `how`.
 - Empty groups use `[]` and are listed in `missing`.
 - Preserve source wording for weapons, dates, places, quantities, and organization names.
+- Every non-empty node should answer a role question for the specific event, not for the whole document.
+- Do not borrow `why` or `how` from a neighboring event unless a relation hyperedge supports the connection.
 
 ## Relation Checks
 
@@ -36,6 +40,14 @@
 - Use `motivates` only when the source event/claim drives the target event.
 - Use `causes` only when causality is explicit.
 
+## Stability Checks
+
+- Stable items repeat across independent passes with the same meaning.
+- Unstable items have shifting role boundaries, relation labels, or event granularity.
+- Missed items are central evidence-backed events absent from one pass.
+- Do not add side details simply because one pass extracted them.
+- Use `scripts/compare_ceh_outputs.py` when comparing multiple CEH JSON files.
+
 ## Failure Patterns
 
 - Flattening a whole document into one 5W1H table.
@@ -44,3 +56,5 @@
 - Attaching 5W1H nodes to clusters instead of events.
 - Using unsupported relation names.
 - Omitting evidence IDs.
+- Choosing a side detail as the cluster root.
+- Filling missing roles from background knowledge instead of source evidence.

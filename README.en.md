@@ -2,10 +2,10 @@
 
 Language: [中文](README.md) | English
 
-`ceh-5w1h` is a Codex skill for extracting clustered event 5W1H knowledge hypergraphs. It does not flatten text into a global 5W1H table. Instead, it structures news, military reports, policy text, incident briefings, and technical reports as:
+`ceh-5w1h` is a Codex skill for extracting clustered event 5W1H knowledge hypergraphs. It does not flatten text into a global 5W1H table. Instead, it structures news, military reports, policy text, incident briefings, and technical reports as event-centered hypergraphs.
 
 ```text
-Document -> Event Clusters -> Events -> 5W1H Event Hyperedges -> Event Relation Hyperedges
+Document -> Event Clusters -> Root Events -> Candidate Spans -> Skeletons -> 5W1H Event Hyperedges -> Event Relation Hyperedges -> Stability Check
 ```
 
 ## Core Idea
@@ -33,6 +33,16 @@ Default output:
 }
 ```
 
+## Method Upgrades
+
+The current version turns several information extraction ideas into executable skill rules:
+
+- main-event-first extraction to avoid fragmented 5W1H tables;
+- coarse-to-fine hyperedge construction from `who -> predicate -> what` skeletons;
+- QA-style role extraction with exact `tag_start` and `tag_end` spans;
+- document-level event memory for cross-sentence arguments;
+- stability auditing across multiple extraction passes as stable / unstable / missed.
+
 ## Relation Vocabulary
 
 Default event relations:
@@ -57,7 +67,13 @@ contrasts_with
 |   |-- SKILL.md
 |   |-- agents/
 |   |-- references/
+|   |   |-- algorithm-playbook.md
+|   |   |-- schema.md
+|   |   |-- state-machine.md
+|   |   `-- ...
 |   `-- scripts/
+|       |-- validate_ceh_output.py
+|       `-- compare_ceh_outputs.py
 |-- examples/
 |   `-- ceh-minimal-output.json
 |-- docs/
@@ -106,6 +122,12 @@ Expected:
 
 ```text
 VALID: 1 cluster(s), 2 event(s), 2 event hyperedge(s), 1 relation hyperedge(s)
+```
+
+Compare multi-pass extraction stability:
+
+```bash
+python ceh-5w1h/scripts/compare_ceh_outputs.py pass1.json pass2.json pass3.json
 ```
 
 ## License
