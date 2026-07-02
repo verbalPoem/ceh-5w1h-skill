@@ -1,0 +1,106 @@
+{
+  "schema_version": "ceh-5w1h-v1",
+  "sentences": {
+    "S1": {
+      "text": "The agency disclosed the missile inventory.",
+      "tag_start": 0,
+      "tag_end": 43
+    }
+  },
+  "nodes": {
+    "N1": {
+      "node_type": "who",
+      "text": "The agency",
+      "entity_type": "ORG",
+      "tag_start": 0,
+      "tag_end": 10,
+      "evidence": ["S1"],
+      "confidence": 0.9
+    },
+    "N2": {
+      "node_type": "what",
+      "text": "the missile inventory",
+      "entity_type": "CLAIM",
+      "tag_start": 21,
+      "tag_end": 42,
+      "evidence": ["S1"],
+      "confidence": 0.9
+    }
+  },
+  "events": {
+    "E1": {
+      "event_type": "disclosure",
+      "summary": "The agency disclosed the missile inventory.",
+      "trigger": {
+        "text": "disclosed",
+        "tag_start": 11,
+        "tag_end": 20
+      },
+      "main": true,
+      "event_hyperedge": "HE1",
+      "evidence": ["S1"],
+      "confidence": 0.9
+    },
+    "E2": {
+      "event_type": "inventory_status",
+      "summary": "The missile inventory was the disclosed state.",
+      "trigger": {
+        "text": "inventory",
+        "tag_start": 33,
+        "tag_end": 42
+      },
+      "main": false,
+      "event_hyperedge": "HE2",
+      "evidence": ["S1"],
+      "confidence": 0.8
+    }
+  },
+  "event_hyperedges": {
+    "HE1": {
+      "event": "E1",
+      "nodes": {
+        "who": ["N1"],
+        "what": ["N2"],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": []
+      },
+      "evidence": ["S1"],
+      "missing": ["when", "where", "why", "how"],
+      "confidence": 0.9
+    },
+    "HE2": {
+      "event": "E2",
+      "nodes": {
+        "who": [],
+        "what": ["N2"],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": []
+      },
+      "evidence": ["S1"],
+      "missing": ["who", "when", "where", "why", "how"],
+      "confidence": 0.8
+    }
+  },
+  "relation_hyperedges": {
+    "RH1": {
+      "relation_type": "discloses",
+      "source_events": ["E1"],
+      "target_events": ["E2"],
+      "evidence": ["S1"],
+      "confidence": 0.9
+    }
+  },
+  "event_clusters": {
+    "EC1": {
+      "topic": "Missile inventory disclosure",
+      "root_event": "E1",
+      "events": ["E1", "E2"],
+      "evidence": ["S1"],
+      "confidence": 0.9
+    }
+  }
+}

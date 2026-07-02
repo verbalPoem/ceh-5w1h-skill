@@ -1,0 +1,4 @@
+interface:
+  display_name: "CEH-5W1H"
+  short_description: "Clustered event 5W1H hypergraph extraction"
+  default_prompt: "Use $ceh-5w1h to extract clustered event 5W1H hypergraphs from the following text."
