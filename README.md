@@ -53,7 +53,7 @@ Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedg
 默认约束：
 
 - 每条 `Text` 只抽一个 `Root_Event`。
-- 每条记录最多 8 个 tags：`WHO <= 2`、`WHAT <= 2`、`WHEN/WHERE/WHY/HOW <= 1`。
+- 每条记录最多 12 个 tags：`WHO <= 5`、`WHAT <= 2`、`WHEN/WHERE <= 1`、`WHY/HOW <= 2`。
 - `Tag_Text` 必须等于 `Text[Tag_Start:Tag_End]`。
 - 同一 record 内不得重复输出 `5W1H_Label + Tag_Text`。
 - 旧版 `ceh-5w1h-v1` 全局索引只在明确要求 `global_index=true` 时使用。
@@ -68,6 +68,7 @@ Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedg
 |   |-- references/
 |   |   |-- schema.md
 |   |   |-- state-machine.md
+|   |   |-- role-coverage.md
 |   |   |-- deduplication.md
 |   |   `-- ...
 |   `-- scripts/
@@ -77,6 +78,7 @@ Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedg
 |       `-- compare_ceh_outputs.py
 |-- examples/
 |   |-- ceh-record-v2-output.json
+|   |-- ceh-whaling-output.json
 |   `-- ceh-minimal-output.json
 |-- docs/
 |-- prompts/
@@ -116,6 +118,7 @@ $ceh-5w1h 请按 ceh-record-v2 抽取下面文本的中心事件与 5W1H tags：
 
 ```bash
 python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-record-v2-output.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-whaling-output.json
 ```
 
 期望输出：
@@ -144,7 +147,7 @@ python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
 - 中文或多语新闻的中心事件 5W1H 抽取；
 - 面向知识超图的事件超边构建；
 - 把旧的全局节点索引改造成可审阅的 record-first 标注视图；
-- 抑制重复 tag、泛化词 tag 和滑窗式事件爆炸；
+- 抑制重复 tag、泛化词 tag 和滑窗式事件爆炸，同时保留中心事件相关参与方；
 - 论文或实验中的 skill-guided extraction baseline。
 
 ## License

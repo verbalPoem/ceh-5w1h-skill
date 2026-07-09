@@ -79,6 +79,8 @@ Rules:
 - Multiple tags are allowed for one role only within the default caps.
 - Do not borrow a role from a neighboring event unless a relation hyperedge explains why.
 - Omit missing tags and list their uppercase labels in `Missing`.
+- For `WHO`, keep the directly connected event ecology: actor/source, target, challenger, affected actor, and monitoring/opposition group when they are explicitly stated.
+- For `HOW`, include legal, administrative, or procedural implementation spans such as orders, permit revocation, or refusal to issue new permits.
 
 ## 4. Document-Level Event Memory
 

@@ -19,14 +19,14 @@ from typing import Any
 LABELS = ("WHO", "WHAT", "WHEN", "WHERE", "WHY", "HOW")
 ROLE_KEYS = tuple(label.lower() for label in LABELS)
 ROLE_CAPS = {
-    "WHO": 2,
+    "WHO": 5,
     "WHAT": 2,
     "WHEN": 1,
     "WHERE": 1,
-    "WHY": 1,
-    "HOW": 1,
+    "WHY": 2,
+    "HOW": 2,
 }
-TOTAL_TAG_CAP = 8
+TOTAL_TAG_CAP = 12
 ROLE_PRIORITY = {"WHO": 0, "WHAT": 1, "WHEN": 2, "WHERE": 3, "WHY": 4, "HOW": 5}
 GENERIC_TERMS = {
     "系统",
@@ -80,6 +80,7 @@ METHOD_SIGNALS = (
     "laser",
     "computer",
 )
+VENUE_TERMS = ("法院", "法庭", "会议", "论坛", "基地", "港口", "海域", "地区", "现场")
 TRIGGER_FALLBACKS = (
     "公开",
     "宣布",
@@ -389,24 +390,14 @@ def deduplicate_candidates(candidates: list[Candidate]) -> list[Candidate]:
             kept.append(item)
         role_filtered.extend(kept)
 
-    by_text: dict[str, Candidate] = {}
-    for item in role_filtered:
-        current = by_text.get(item.norm)
-        if current is None:
-            by_text[item.norm] = item
-            continue
-        item_key = (ROLE_PRIORITY[item.label], -len(item.text), item.start)
-        current_key = (ROLE_PRIORITY[current.label], -len(current.text), current.start)
-        if item_key < current_key:
-            by_text[item.norm] = item
-
-    values = list(by_text.values())
+    values = role_filtered
     who_norms = [item.norm for item in values if item.label == "WHO"]
     values = [
         item
         for item in values
         if not (
             item.label == "WHERE"
+            and not any(term in item.text for term in VENUE_TERMS)
             and any(item.norm and (item.norm in who_norm or who_norm in item.norm) for who_norm in who_norms)
         )
     ]

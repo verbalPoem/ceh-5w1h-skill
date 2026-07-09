@@ -13,6 +13,7 @@
    - `ceh-5w1h/SKILL.md`
    - `ceh-5w1h/references/schema.md`
    - `ceh-5w1h/references/state-machine.md`
+   - `ceh-5w1h/references/role-coverage.md`
    - `ceh-5w1h/references/deduplication.md`
    - `ceh-5w1h/scripts/validate_ceh_record_output.py`
    - `ceh-5w1h/scripts/convert_ceh_global_to_record_view.py`

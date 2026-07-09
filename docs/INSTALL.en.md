@@ -50,6 +50,7 @@ If a new Codex thread recognizes `$ceh-5w1h`, the installation is successful.
 
 ```bash
 python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-record-v2-output.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-whaling-output.json
 ```
 
 Expected:

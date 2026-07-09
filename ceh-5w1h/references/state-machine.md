@@ -56,12 +56,12 @@ Extract 5W1H spans only for the root event.
 
 Role questions:
 
-- WHO: actor, source, owner, participant, affected party.
+- WHO: adjudicator/source/actor, regulated target, challenger, owner, participant, affected party, monitoring group, opposition group.
 - WHAT: central action, claim, status, system, object, or result.
 - WHEN: event time, report time, validity/as-of time, deadline, plan time.
-- WHERE: location, deployment site, affected area, base, platform, theater.
-- WHY: cause, purpose, risk, motivation, concern.
-- HOW: method, mechanism, capability, procedure, platform.
+- WHERE: location, forum, court, venue, deployment site, affected area, base, platform, theater.
+- WHY: cause, legal challenge, rejected rationale, purpose, risk, motivation, concern.
+- HOW: method, mechanism, order, required action, administrative measure, capability, procedure, platform.
 
 Each tag must use exact source offsets:
 
@@ -82,13 +82,13 @@ Apply `references/deduplication.md` before output.
 Default caps:
 
 ```text
-WHO <= 2
+WHO <= 5
 WHAT <= 2
 WHEN <= 1
 WHERE <= 1
-WHY <= 1
-HOW <= 1
-TOTAL TAGS <= 8
+WHY <= 2
+HOW <= 2
+TOTAL TAGS <= 12
 ```
 
 Prefer specific spans:
@@ -96,6 +96,7 @@ Prefer specific spans:
 - keep "US Department of Defense" over "US";
 - keep "E-2D Advanced Hawkeye aircraft" over "aircraft";
 - keep "missile defense system" over "system".
+- keep directly connected participants even if they appear in background sentences that motivate or implement the root event.
 
 ## S4_VALIDATE
 

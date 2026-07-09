@@ -1,0 +1,124 @@
+{
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "sample-whaling-001",
+      "Text": "周一，国际法院裁定日本不得继续其年度捕鲸活动，并驳回了日本关于该项目用于科学研究的说法。法院要求日本撤销与JARPAII项目有关的现有许可，并不得继续发放新的许可。日本捕鲸船队长期在全球商业捕鲸禁令背景下继续捕鲸。每年，海洋保护组织SeaShepherd等环保组织都会追踪日本捕鲸者，试图阻止捕鲸活动。此前，澳大利亚政府在国际法院挑战日本捕鲸项目，最终促成了周一的裁决。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "国际法院裁定日本不得继续年度捕鲸活动，并要求撤销JARPAII项目相关许可且不得继续发放新许可",
+        "Trigger": {
+          "Tag_Text": "裁定",
+          "Tag_Start": 7,
+          "Tag_End": 9
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "国际法院",
+          "Tag_Start": 3,
+          "Tag_End": 7,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "日本",
+          "Tag_Start": 9,
+          "Tag_End": 11,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "澳大利亚政府",
+          "Tag_Start": 154,
+          "Tag_End": 160,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "日本捕鲸船队",
+          "Tag_Start": 82,
+          "Tag_End": 88,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "SeaShepherd等环保组织",
+          "Tag_Start": 116,
+          "Tag_End": 132,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "国际法院裁定日本不得继续其年度捕鲸活动",
+          "Tag_Start": 3,
+          "Tag_End": 22,
+          "5W1H_Label": "WHAT",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "周一",
+          "Tag_Start": 0,
+          "Tag_End": 2,
+          "5W1H_Label": "WHEN",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "国际法院",
+          "Tag_Start": 3,
+          "Tag_End": 7,
+          "5W1H_Label": "WHERE",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "驳回了日本关于该项目用于科学研究的说法",
+          "Tag_Start": 24,
+          "Tag_End": 43,
+          "5W1H_Label": "WHY",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "澳大利亚政府在国际法院挑战日本捕鲸项目",
+          "Tag_Start": 154,
+          "Tag_End": 173,
+          "5W1H_Label": "WHY",
+          "Reliability_Label": "direct"
+        },
+        {
+          "Tag_Text": "法院要求日本撤销与JARPAII项目有关的现有许可，并不得继续发放新的许可",
+          "Tag_Start": 44,
+          "Tag_End": 81,
+          "5W1H_Label": "HOW",
+          "Reliability_Label": "direct"
+        }
+      ],
+      "Missing": [],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [
+          0,
+          1,
+          2,
+          3,
+          4
+        ],
+        "what": [
+          5
+        ],
+        "when": [
+          6
+        ],
+        "where": [
+          7
+        ],
+        "why": [
+          8,
+          9
+        ],
+        "how": [
+          10
+        ]
+      }
+    }
+  ]
+}

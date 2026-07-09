@@ -20,14 +20,14 @@ SCHEMA_VERSION = "ceh-record-v2"
 LABELS = ("WHO", "WHAT", "WHEN", "WHERE", "WHY", "HOW")
 ROLE_KEYS = tuple(label.lower() for label in LABELS)
 ROLE_CAPS = {
-    "WHO": 2,
+    "WHO": 5,
     "WHAT": 2,
     "WHEN": 1,
     "WHERE": 1,
-    "WHY": 1,
-    "HOW": 1,
+    "WHY": 2,
+    "HOW": 2,
 }
-TOTAL_TAG_CAP = 8
+TOTAL_TAG_CAP = 12
 RELIABILITY_LABELS = {"direct", "inferred", "converted"}
 
 

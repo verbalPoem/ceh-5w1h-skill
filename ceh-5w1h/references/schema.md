@@ -79,16 +79,16 @@ Rules:
 
 ## Default Caps
 
-Default extraction is intentionally small:
+Default extraction is compact but participant-complete:
 
 ```text
-WHO <= 2
+WHO <= 5
 WHAT <= 2
 WHEN <= 1
 WHERE <= 1
-WHY <= 1
-HOW <= 1
-TOTAL TAGS <= 8
+WHY <= 2
+HOW <= 2
+TOTAL TAGS <= 12
 ROOT EVENTS = 1
 ```
 

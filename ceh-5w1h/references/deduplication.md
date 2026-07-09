@@ -44,11 +44,12 @@ When the same text could be more than one role:
 
 - country or organization as actor/source/owner -> `WHO`;
 - country or region as affected/deployment location -> `WHERE`;
+- court, meeting, base, forum, or venue may be both `WHO` and `WHERE` if the text explicitly uses it as both actor/source and institutional or physical setting;
 - system/platform/object being acted on -> `WHAT`;
 - capability, method, mechanism, or procedure -> `HOW`;
 - purpose, risk, cause, or motivation -> `WHY`.
 
-Do not output the same `Tag_Text` as both `WHO` and `WHERE` in the same record unless the sentence explicitly uses it in both functions.
+Do not output the same `Tag_Text` as both `WHO` and `WHERE` in the same record unless the text explicitly uses it in both functions.
 
 ## Generic Span Guard
 
@@ -76,13 +77,13 @@ These words may appear inside a longer specific tag.
 Default caps:
 
 ```text
-WHO <= 2
+WHO <= 5
 WHAT <= 2
 WHEN <= 1
 WHERE <= 1
-WHY <= 1
-HOW <= 1
-TOTAL <= 8
+WHY <= 2
+HOW <= 2
+TOTAL <= 12
 ```
 
 If too many candidates remain:

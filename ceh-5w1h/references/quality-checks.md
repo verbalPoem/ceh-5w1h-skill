@@ -39,10 +39,11 @@ Apply these checks only when the user requests `global_index=true` or asks for a
 ## Dedup Checks
 
 - No duplicate `5W1H_Label + normalize(Tag_Text)` pairs inside one record.
-- `WHO <= 2`, `WHAT <= 2`, `WHEN/WHERE/WHY/HOW <= 1`.
-- Default total tags per record is `<= 8`.
+- `WHO <= 5`, `WHAT <= 2`, `WHEN/WHERE <= 1`, `WHY/HOW <= 2`.
+- Default total tags per record is `<= 12`.
 - Prefer specific spans over generic substrings.
 - Do not output standalone generic spans when a longer useful span exists.
+- Do not drop central participants merely because they are connected through cause, opposition, implementation, or affected-party context.
 
 ## Diagram Checks
 

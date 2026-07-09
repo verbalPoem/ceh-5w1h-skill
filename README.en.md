@@ -53,7 +53,7 @@ Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedg
 Default constraints:
 
 - One `Root_Event` per `Text`.
-- At most 8 tags per record: `WHO <= 2`, `WHAT <= 2`, and `WHEN/WHERE/WHY/HOW <= 1`.
+- At most 12 tags per record: `WHO <= 5`, `WHAT <= 2`, `WHEN/WHERE <= 1`, and `WHY/HOW <= 2`.
 - `Tag_Text` must equal `Text[Tag_Start:Tag_End]`.
 - No duplicate `5W1H_Label + Tag_Text` within the same record.
 - The old `ceh-5w1h-v1` global-index schema is optional and should be used only with `global_index=true`.
@@ -68,6 +68,7 @@ Default constraints:
 |   |-- references/
 |   |   |-- schema.md
 |   |   |-- state-machine.md
+|   |   |-- role-coverage.md
 |   |   |-- deduplication.md
 |   |   `-- ...
 |   `-- scripts/
@@ -77,6 +78,7 @@ Default constraints:
 |       `-- compare_ceh_outputs.py
 |-- examples/
 |   |-- ceh-record-v2-output.json
+|   |-- ceh-whaling-output.json
 |   `-- ceh-minimal-output.json
 |-- docs/
 |-- prompts/
@@ -116,6 +118,7 @@ Validate record-first output:
 
 ```bash
 python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-record-v2-output.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-whaling-output.json
 ```
 
 Expected:
@@ -142,7 +145,7 @@ python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
 - center-event 5W1H extraction for Chinese or multilingual news;
 - event-hyperedge construction for knowledge hypergraphs;
 - converting noisy global node indexes into auditable record-first annotation views;
-- reducing duplicate tags, generic-word tags, and sliding-window event explosions;
+- reducing duplicate tags, generic-word tags, and sliding-window event explosions while preserving directly connected participants;
 - skill-guided extraction baselines for papers or experiments.
 
 ## License
