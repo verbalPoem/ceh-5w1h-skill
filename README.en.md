@@ -2,62 +2,61 @@
 
 Language: [中文](README.md) | English
 
-`ceh-5w1h` is a Codex skill for extracting clustered event 5W1H knowledge hypergraphs. It does not flatten text into a global 5W1H table. Instead, it structures news, military reports, policy text, incident briefings, and technical reports as event-centered hypergraphs.
+`ceh-5w1h` is a Codex skill for event-centered 5W1H extraction and knowledge-hypergraph construction. The default mode is now **Record-first + Root event only**: each source text is kept beside its root event, 5W1H tags, and event hyperedge, so outputs are easy to audit and do not explode into a huge global `nodes/events` index.
 
 ```text
-Document -> Event Clusters -> Root Events -> Candidate Spans -> Skeletons -> 5W1H Event Hyperedges -> Event Relation Hyperedges -> Stability Check
+Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedge
 ```
 
-## Core Idea
-
-```text
-EC1 / EC2 = event clusters
-E1 / E2 = events
-HE1 / HE2 = event-level 5W1H hyperedges
-RH1 / RH2 = event-to-event relation hyperedges
-N1 / N2 = 5W1H nodes
-S1 / S2 = evidence sentences
-```
-
-Default output:
+## Default Output: ceh-record-v2
 
 ```json
 {
-  "schema_version": "ceh-5w1h-v1",
-  "sentences": {},
-  "nodes": {},
-  "events": {},
-  "event_hyperedges": {},
-  "relation_hyperedges": {},
-  "event_clusters": {}
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "sample id",
+      "Text": "source text",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "center event summary",
+        "Trigger": {
+          "Tag_Text": "trigger",
+          "Tag_Start": 0,
+          "Tag_End": 0
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "source span",
+          "Tag_Start": 0,
+          "Tag_End": 0,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        }
+      ],
+      "Missing": ["WHY"],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [0],
+        "what": [],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": []
+      }
+    }
+  ]
 }
 ```
 
-## Method Upgrades
+Default constraints:
 
-The current version turns several information extraction ideas into executable skill rules:
-
-- main-event-first extraction to avoid fragmented 5W1H tables;
-- coarse-to-fine hyperedge construction from `who -> predicate -> what` skeletons;
-- QA-style role extraction with exact `tag_start` and `tag_end` spans;
-- document-level event memory for cross-sentence arguments;
-- stability auditing across multiple extraction passes as stable / unstable / missed.
-
-## Relation Vocabulary
-
-Default event relations:
-
-```text
-discloses
-supports
-motivates
-causes
-part_of
-component_of
-background_of
-enables
-contrasts_with
-```
+- One `Root_Event` per `Text`.
+- At most 8 tags per record: `WHO <= 2`, `WHAT <= 2`, and `WHEN/WHERE/WHY/HOW <= 1`.
+- `Tag_Text` must equal `Text[Tag_Start:Tag_End]`.
+- No duplicate `5W1H_Label + Tag_Text` within the same record.
+- The old `ceh-5w1h-v1` global-index schema is optional and should be used only with `global_index=true`.
 
 ## Repository Layout
 
@@ -67,21 +66,20 @@ contrasts_with
 |   |-- SKILL.md
 |   |-- agents/
 |   |-- references/
-|   |   |-- algorithm-playbook.md
 |   |   |-- schema.md
 |   |   |-- state-machine.md
+|   |   |-- deduplication.md
 |   |   `-- ...
 |   `-- scripts/
+|       |-- validate_ceh_record_output.py
+|       |-- convert_ceh_global_to_record_view.py
 |       |-- validate_ceh_output.py
 |       `-- compare_ceh_outputs.py
 |-- examples/
+|   |-- ceh-record-v2-output.json
 |   `-- ceh-minimal-output.json
 |-- docs/
-|   |-- INSTALL.md
-|   `-- INSTALL.en.md
 |-- prompts/
-|   |-- install-with-ai.zh.md
-|   `-- install-with-ai.en.md
 |-- README.md
 |-- README.en.md
 `-- LICENSE
@@ -106,7 +104,7 @@ cp -R ./ceh-5w1h ~/.codex/skills/
 Then start a new Codex thread:
 
 ```text
-$ceh-5w1h extract clustered event 5W1H hypergraphs from the following text and draw a Mermaid diagram:
+$ceh-5w1h Extract the root event and 5W1H tags from the following text using ceh-record-v2:
 ...
 ```
 
@@ -114,21 +112,38 @@ For detailed installation instructions, see [docs/INSTALL.en.md](docs/INSTALL.en
 
 ## Validate Output
 
+Validate record-first output:
+
 ```bash
-python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-record-v2-output.json
 ```
 
 Expected:
 
 ```text
-VALID: 1 cluster(s), 2 event(s), 2 event hyperedge(s), 1 relation hyperedge(s)
+VALID: 1 record(s), 4 tag(s)
 ```
 
-Compare multi-pass extraction stability:
+Convert legacy global CEH JSON into an auditable record-first view:
 
 ```bash
-python ceh-5w1h/scripts/compare_ceh_outputs.py pass1.json pass2.json pass3.json
+python ceh-5w1h/scripts/convert_ceh_global_to_record_view.py old_ceh.json old_ceh_record_v2.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py old_ceh_record_v2.json
 ```
+
+The old global-index schema can still be validated:
+
+```bash
+python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
+```
+
+## Use Cases
+
+- center-event 5W1H extraction for Chinese or multilingual news;
+- event-hyperedge construction for knowledge hypergraphs;
+- converting noisy global node indexes into auditable record-first annotation views;
+- reducing duplicate tags, generic-word tags, and sliding-window event explosions;
+- skill-guided extraction baselines for papers or experiments.
 
 ## License
 

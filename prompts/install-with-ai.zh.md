@@ -12,15 +12,16 @@
 4. 复制后检查目标路径中是否存在：
    - `ceh-5w1h/SKILL.md`
    - `ceh-5w1h/references/schema.md`
-   - `ceh-5w1h/references/algorithm-playbook.md`
-   - `ceh-5w1h/scripts/validate_ceh_output.py`
-   - `ceh-5w1h/scripts/compare_ceh_outputs.py`
+   - `ceh-5w1h/references/state-machine.md`
+   - `ceh-5w1h/references/deduplication.md`
+   - `ceh-5w1h/scripts/validate_ceh_record_output.py`
+   - `ceh-5w1h/scripts/convert_ceh_global_to_record_view.py`
 5. 不要删除或覆盖其他 skill。
 6. 如果目标目录中已经存在 `ceh-5w1h/`，覆盖前先告诉我。
 7. 安装完成后，提醒我新开一个 Codex 线程并使用：
 
 ```text
-$ceh-5w1h 把下面文本抽成事件簇 5W1H 知识超图：
+$ceh-5w1h 请按 ceh-record-v2 抽取下面文本的中心事件与 5W1H tags：
 ...
 ```
 

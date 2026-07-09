@@ -1,20 +1,20 @@
 ---
 name: ceh-5w1h
-description: Stability-controlled Clustered Event Hypergraph for 5W1H Extraction. Use when asked to extract 5W1H without fragmenting text, group related events into event clusters, build event-centric knowledge hypergraphs, model event-to-event relations, draw event cluster diagrams, compare multi-pass extraction stability, or produce structured data for knowledge hypergraph construction from news, military, policy, incident, technical, or report text.
+description: Record-first Clustered Event Hypergraph for 5W1H Extraction. Use when asked to extract auditable 5W1H tags without fragmentation, keep each source text beside its tags, select one root event per record, deduplicate repeated role spans, build event-centric knowledge hypergraphs, model event-to-event relations, draw 5W1H diagrams, compare extraction stability, or produce structured data for knowledge hypergraph construction from news, military, policy, incident, technical, or report text.
 ---
 
 # CEH-5W1H
 
 ## Overview
 
-Use this skill to extract **Clustered Event Hypergraphs for 5W1H**.
+Use this skill to extract **record-first Clustered Event Hypergraphs for 5W1H**.
 
-Do not treat 5W1H as the final result. Treat 5W1H as the internal structure of an event. First group related events into event clusters, then extract each event as a 5W1H hyperedge, then connect events with relation hyperedges.
+Keep each source `Text` beside its extracted `Tags` so humans can audit offsets immediately. Treat 5W1H as the internal structure of one root event per record, not as a global node dump.
 
 Core idea:
 
 ```text
-Document -> Event Clusters -> Root Events -> Candidate Spans -> Skeletons -> 5W1H Event Hyperedges -> Event Relation Hyperedges -> Stability Check
+Record Text -> Root Event -> Deduplicated 5W1H Tags -> Event Hyperedge -> Optional Global Index
 ```
 
 Default output is valid JSON unless the user asks for a diagram or explanation.
@@ -24,55 +24,75 @@ Default output is valid JSON unless the user asks for a diagram or explanation.
 Always read:
 
 - `references/schema.md` before producing JSON.
-- `references/relation-vocabulary.md` before assigning event-to-event relations.
-- `references/state-machine.md` when input is long, noisy, or multi-event.
+- `references/state-machine.md` before processing multi-record or noisy input.
+- `references/deduplication.md` before producing tags.
 - `references/algorithm-playbook.md` when the task needs higher-quality extraction, paper-style method explanation, or a noisy multi-event document.
 - `references/quality-checks.md` before final output.
 
 Read as needed:
 
+- `references/relation-vocabulary.md` only when producing optional event-to-event relations or global index output.
 - `references/diagram-guide.md` when the user asks to draw or explain the structure.
 
 ## Default Workflow
 
-1. Segment the input into topic-level event clusters, not sentence-level fragments.
-2. Identify event candidates inside each cluster and score their centrality.
-3. Pick a `root_event` for each cluster: the event that best represents the cluster's essential point.
-4. Build a coarse event skeleton first: actor, predicate, object or state.
-5. Refine the skeleton with 5W1H spans using role questions and exact source offsets.
-6. Project each accepted event into one `event_hyperedge`.
-7. Connect events using `relation_hyperedges` from the controlled relation vocabulary.
-8. Validate coherence, evidence, missing roles, and optional multi-pass stability.
+1. Process one record or one source text at a time.
+2. Select exactly one `Root_Event` unless the user explicitly asks for `full_detail` or `global_index`.
+3. Extract 5W1H spans as inline `Tags` beside the same `Text`.
+4. Deduplicate tags inside the record before output.
+5. Enforce default caps: WHO <= 2, WHAT <= 2, WHEN/WHERE/WHY/HOW <= 1 each, total tags <= 8.
+6. Project tag indexes into one `Event_Hyperedge`.
+7. Validate offsets, duplicate tags, missing roles, and role caps.
+8. Produce optional `ceh-5w1h-v1` global index only when explicitly requested.
 
 ## Output Contract
 
-Use `schema_version: "ceh-5w1h-v1"`.
+Use `schema_version: "ceh-record-v2"` by default.
 
 ```json
 {
-  "schema_version": "ceh-5w1h-v1",
-  "sentences": {},
-  "nodes": {},
-  "events": {},
-  "event_hyperedges": {},
-  "relation_hyperedges": {},
-  "event_clusters": {}
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "sample id",
+      "Text": "source text",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "center event summary",
+        "Trigger": {
+          "Tag_Text": "trigger",
+          "Tag_Start": 0,
+          "Tag_End": 0
+        }
+      },
+      "Tags": [],
+      "Missing": [],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [],
+        "what": [],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": []
+      }
+    }
+  ]
 }
 ```
 
 The important distinction:
 
-- `nodes`: indexed 5W1H nodes such as `N1`, `N2`.
-- `events`: event frames such as `E1`, `E2`.
-- `event_hyperedges`: one event connected to its 5W1H nodes.
-- `relation_hyperedges`: event-to-event relations such as `discloses`, `motivates`, `background_of`.
-- `event_clusters`: topic-level groups such as `EC1`, `EC2`.
+- `Text` and `Tags` live in the same record for easy comparison.
+- `Tags` use FLARES-style fields: `Tag_Text`, `Tag_Start`, `Tag_End`, `5W1H_Label`, `Reliability_Label`.
+- `Event_Hyperedge` connects the root event to tag indexes, not to a huge global `nodes` object.
+- `ceh-5w1h-v1` global index is optional and must be requested with `global_index=true`.
 
 ## Event Cluster Rule
 
-Create an event cluster when several events share the same issue, system, actor, report, operation, project, accident, or policy thread.
+Create an event cluster only in optional global-index mode or diagram explanations.
 
-Do not create a cluster for every paragraph automatically. Create a cluster only when it helps preserve event coherence.
+Do not create a cluster for every paragraph automatically. In default record-first mode, the record itself is the audit unit and has one root event.
 
 Good cluster examples:
 
@@ -99,12 +119,12 @@ Prefer events that explain the cluster, organize related details, and can be rea
 
 ## Coarse-to-Fine Extraction
 
-For each accepted event:
+For each record:
 
 1. Create a coarse skeleton: `who -> predicate -> what`.
 2. Add qualifiers: `when`, `where`, `why`, `how`, quantities, status, conditions.
 3. Convert the enriched skeleton into an event hyperedge.
-4. Keep rejected details as nodes only when they fill a role of an accepted event.
+4. Keep rejected details out of `Tags` unless they fill a capped role of the root event.
 
 This prevents the model from turning every sentence into an event while preserving useful fine-grained information.
 
@@ -121,7 +141,17 @@ why: what cause, motivation, risk, purpose, or claimed reason is stated?
 how: what method, mechanism, platform, capability, or procedure is stated?
 ```
 
-Return exact source spans with `tag_start` and `tag_end`. If a role is not stated, use an empty list and list the role in `missing`.
+Return exact source spans with `Tag_Start` and `Tag_End`. If a role is not stated, omit the tag and list the role in `Missing`.
+
+## Deduplication And Caps
+
+Before final output:
+
+- Deduplicate by `5W1H_Label + normalize(Tag_Text)` inside each record.
+- Prefer longer, more specific spans over generic substrings in the same role.
+- Prefer an actor/source interpretation over `WHERE` when a country or organization performs the action.
+- Avoid standalone generic terms such as "system", "missile", "plan", or "currently" unless they are part of a more specific phrase.
+- Enforce default caps: WHO <= 2, WHAT <= 2, WHEN/WHERE/WHY/HOW <= 1 each, total tags <= 8.
 
 ## Stability Mode
 
@@ -176,6 +206,8 @@ In diagrams:
 
 - Do not flatten a document into one global 5W1H table.
 - Do not split every sentence into an event.
+- Do not output a giant global `nodes` object unless the user asks for `global_index=true`.
+- Do not process multiple records as one merged extraction unit.
 - Do not create event relations without evidence.
 - Do not attach 5W1H nodes directly to clusters; attach them to events through `event_hyperedges`.
 - Do not draw an event relation diagram without also showing the relevant event's 5W1H roles.

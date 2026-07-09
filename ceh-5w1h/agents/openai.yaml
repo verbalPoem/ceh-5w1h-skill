@@ -1,4 +1,4 @@
 interface:
   display_name: "CEH-5W1H"
-  short_description: "Stability-controlled event 5W1H hypergraph extraction"
-  default_prompt: "Use $ceh-5w1h to extract a stability-controlled clustered event 5W1H hypergraph from the following text."
+  short_description: "Record-first root-event 5W1H hypergraph extraction"
+  default_prompt: "Use $ceh-5w1h to extract one root event and auditable 5W1H tags in ceh-record-v2 from the following text."

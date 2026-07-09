@@ -2,62 +2,61 @@
 
 语言：中文 | [English](README.en.md)
 
-`ceh-5w1h` 是一个面向 Codex 的事件簇 5W1H 知识超图抽取 skill。它的目标不是把文本拆成一张扁平 5W1H 表，而是把新闻、军事报道、政策文本、事故通报和技术报告组织成事件中心的知识超图。
+`ceh-5w1h` 是一个面向 Codex 的 5W1H 事件超图抽取 skill。它现在默认采用 **Record-first + Root event only**：每条原文旁边直接放中心事件、5W1H tags 和事件超边，方便人工逐条审阅，不再默认生成一个巨大的全局 `nodes/events` 索引。
 
 ```text
-Document -> Event Clusters -> Root Events -> Candidate Spans -> Skeletons -> 5W1H Event Hyperedges -> Event Relation Hyperedges -> Stability Check
+Record Text -> Root_Event -> Tags(WHO/WHAT/WHEN/WHERE/WHY/HOW) -> Event_Hyperedge
 ```
 
-## 核心思想
-
-```text
-EC1 / EC2 = 事件簇
-E1 / E2 = 事件
-HE1 / HE2 = 事件内部的 5W1H 超边
-RH1 / RH2 = 事件之间的关系超边
-N1 / N2 = 5W1H 节点
-S1 / S2 = 证据句
-```
-
-默认输出结构：
+## 默认输出：ceh-record-v2
 
 ```json
 {
-  "schema_version": "ceh-5w1h-v1",
-  "sentences": {},
-  "nodes": {},
-  "events": {},
-  "event_hyperedges": {},
-  "relation_hyperedges": {},
-  "event_clusters": {}
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "sample id",
+      "Text": "原文",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "中心事件摘要",
+        "Trigger": {
+          "Tag_Text": "触发词",
+          "Tag_Start": 0,
+          "Tag_End": 0
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "原文片段",
+          "Tag_Start": 0,
+          "Tag_End": 0,
+          "5W1H_Label": "WHO",
+          "Reliability_Label": "direct"
+        }
+      ],
+      "Missing": ["WHY"],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [0],
+        "what": [],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": []
+      }
+    }
+  ]
 }
 ```
 
-## 方法增强
+默认约束：
 
-当前版本把多个信息抽取思路转成了可执行规则：
-
-- 主事件优先：先找每个事件簇的 `root_event`，避免把新闻拆成碎片化 5W1H。
-- 粗到细超边构建：先建 `who -> predicate -> what` 骨架，再补时间、地点、原因、方式等限定信息。
-- QA-style 角色抽取：围绕单个事件逐一追问 who / what / when / where / why / how，并保留 `tag_start` 与 `tag_end`。
-- 文档级事件记忆：处理跨句分散的事件论元，避免只看单句导致漏抽。
-- 稳定性审计：比较多轮输出里的 stable / unstable / missed 结构，提高高置信抽取质量。
-
-## 关系词表
-
-默认事件关系使用固定词表：
-
-```text
-discloses       披露
-supports        支撑
-motivates       驱动/促使
-causes          导致
-part_of         属于
-component_of    组成部分
-background_of   背景
-enables         使能够
-contrasts_with  对比
-```
+- 每条 `Text` 只抽一个 `Root_Event`。
+- 每条记录最多 8 个 tags：`WHO <= 2`、`WHAT <= 2`、`WHEN/WHERE/WHY/HOW <= 1`。
+- `Tag_Text` 必须等于 `Text[Tag_Start:Tag_End]`。
+- 同一 record 内不得重复输出 `5W1H_Label + Tag_Text`。
+- 旧版 `ceh-5w1h-v1` 全局索引只在明确要求 `global_index=true` 时使用。
 
 ## 仓库结构
 
@@ -67,21 +66,20 @@ contrasts_with  对比
 |   |-- SKILL.md
 |   |-- agents/
 |   |-- references/
-|   |   |-- algorithm-playbook.md
 |   |   |-- schema.md
 |   |   |-- state-machine.md
+|   |   |-- deduplication.md
 |   |   `-- ...
 |   `-- scripts/
+|       |-- validate_ceh_record_output.py
+|       |-- convert_ceh_global_to_record_view.py
 |       |-- validate_ceh_output.py
 |       `-- compare_ceh_outputs.py
 |-- examples/
+|   |-- ceh-record-v2-output.json
 |   `-- ceh-minimal-output.json
 |-- docs/
-|   |-- INSTALL.md
-|   `-- INSTALL.en.md
 |-- prompts/
-|   |-- install-with-ai.zh.md
-|   `-- install-with-ai.en.md
 |-- README.md
 |-- README.en.md
 `-- LICENSE
@@ -106,40 +104,48 @@ cp -R ./ceh-5w1h ~/.codex/skills/
 然后新开一个 Codex 线程：
 
 ```text
-$ceh-5w1h 把下面文本抽成事件簇 5W1H 知识超图，并画 Mermaid 图：
+$ceh-5w1h 请按 ceh-record-v2 抽取下面文本的中心事件与 5W1H tags：
 ...
 ```
 
 更详细的安装说明见：[docs/INSTALL.md](docs/INSTALL.md)
 
-## 验证输出
+## 校验输出
+
+校验新版 record-first 输出：
 
 ```bash
-python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py examples/ceh-record-v2-output.json
 ```
 
 期望输出：
 
 ```text
-VALID: 1 cluster(s), 2 event(s), 2 event hyperedge(s), 1 relation hyperedge(s)
+VALID: 1 record(s), 4 tag(s)
 ```
 
-比较多轮抽取稳定性：
+把旧的全局 CEH JSON 转成便于人工审阅的 record-first 视图：
 
 ```bash
-python ceh-5w1h/scripts/compare_ceh_outputs.py pass1.json pass2.json pass3.json
+python ceh-5w1h/scripts/convert_ceh_global_to_record_view.py old_ceh.json old_ceh_record_v2.json
+python ceh-5w1h/scripts/validate_ceh_record_output.py old_ceh_record_v2.json
+```
+
+旧版全局索引仍可校验：
+
+```bash
+python ceh-5w1h/scripts/validate_ceh_output.py examples/ceh-minimal-output.json
 ```
 
 ## 方法定位
 
-`ceh-5w1h` 适合用于：
+这个 skill 适合用于：
 
-- 多事件新闻结构化
-- 5W1H 事件簇标注
-- 知识超图构建
-- 事件关系建模
-- LLM 抽取方法实验
-- 论文方法设计与消融实验
+- 中文或多语新闻的中心事件 5W1H 抽取；
+- 面向知识超图的事件超边构建；
+- 把旧的全局节点索引改造成可审阅的 record-first 标注视图；
+- 抑制重复 tag、泛化词 tag 和滑窗式事件爆炸；
+- 论文或实验中的 skill-guided extraction baseline。
 
 ## License
 

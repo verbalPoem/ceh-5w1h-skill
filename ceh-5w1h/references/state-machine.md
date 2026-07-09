@@ -1,145 +1,131 @@
-# CEH-5W1H Finite-State Controller
+# CEH-5W1H Record-First Controller
 
-Use this controller for multi-event text.
-
-```text
-S0_SEGMENT
-  -> S1_EVENT_CANDIDATES
-  -> S2_NODE_SPAN_CANDIDATES
-  -> S3_CLUSTER_GROUP
-  -> S4_ROOT_SELECT
-  -> S5_COARSE_SKELETON
-  -> S6_ROLE_5W1H
-  -> S7_RELATION_LINK
-  -> S8_STABILITY_VALIDATE
-```
-
-## S0_SEGMENT
-
-Split input into topic-level blocks. Strong split signals:
-
-- different topic or system
-- different country/company/person with a new predicate
-- independent news brief boundary
-- sharp reset of time/place/object
-
-Do not split by every sentence.
-
-## S1_EVENT_CANDIDATES
-
-Find event candidates with clear predicates or states:
-
-- disclosure or announcement
-- possession, deployment, reserve, construction, test, exhibit
-- claim, concern, risk assessment, demonstration
-- capability or configuration when it supports a central event
-
-Discard attractive technical details if they do not become useful events or 5W1H nodes.
-
-## S2_NODE_SPAN_CANDIDATES
-
-Collect possible nodes before final event formation:
-
-- actors, sources, organizations, countries, persons
-- systems, weapons, platforms, projects, policies
-- time expressions and as-of dates
-- places, regions, bases, vessels, theaters
-- causes, risks, motivations, purposes
-- methods, mechanisms, capabilities, procedures
-
-Keep exact spans and tentative offsets. Do not output these yet; use them as candidates for event hyperedges.
-
-## S3_CLUSTER_GROUP
-
-Group candidates into `event_clusters`.
-
-Cluster events when they share:
-
-- same report or source disclosure
-- same policy/security issue
-- same weapon system/project
-- same exhibition/test/construction story
-- same accident/incident chain
-
-Do not merge independent news briefs merely because they share a broad domain such as "military".
-
-## S4_ROOT_SELECT
-
-Pick one root event per cluster:
+Use this controller for every default extraction.
 
 ```text
-root_score =
-  source_position
-  + predicate_salience
-  + relation_degree
-  + evidence_density
-  + cluster_explanation_power
-  - side_detail_penalty
+S0_READ_RECORD
+  -> S1_ROOT_EVENT
+  -> S2_TAGS
+  -> S3_DEDUP
+  -> S4_VALIDATE
 ```
 
-The root event should be the easiest entry point for a reader.
+## S0_READ_RECORD
 
-## S5_COARSE_SKELETON
+Process one source record at a time.
 
-Build a coarse skeleton before 5W1H:
+Inputs may be:
+
+- one raw text block;
+- one dataset object with `Id` and `Text`;
+- one legacy CEH event cluster during conversion.
+
+Do not merge unrelated records into one extraction unit.
+
+## S1_ROOT_EVENT
+
+Select exactly one root event by default.
+
+Root event criteria:
+
+- best explains the record;
+- has a clear predicate/action/state;
+- supports the most useful 5W1H roles;
+- is not a sliding window fragment;
+- is not merely a quantity, equipment feature, quote, or background detail.
+
+Set:
+
+```json
+{
+  "Event_Id": "E1",
+  "Event_Text": "concise event summary",
+  "Trigger": {
+    "Tag_Text": "trigger",
+    "Tag_Start": 0,
+    "Tag_End": 0
+  }
+}
+```
+
+Use one root event unless the user explicitly asks for `full_detail=true`.
+
+## S2_TAGS
+
+Extract 5W1H spans only for the root event.
+
+Role questions:
+
+- WHO: actor, source, owner, participant, affected party.
+- WHAT: central action, claim, status, system, object, or result.
+- WHEN: event time, report time, validity/as-of time, deadline, plan time.
+- WHERE: location, deployment site, affected area, base, platform, theater.
+- WHY: cause, purpose, risk, motivation, concern.
+- HOW: method, mechanism, capability, procedure, platform.
+
+Each tag must use exact source offsets:
+
+```json
+{
+  "Tag_Text": "source span",
+  "Tag_Start": 0,
+  "Tag_End": 0,
+  "5W1H_Label": "WHO",
+  "Reliability_Label": "direct"
+}
+```
+
+## S3_DEDUP
+
+Apply `references/deduplication.md` before output.
+
+Default caps:
 
 ```text
-who/source -> predicate/action/state -> what/object/result
+WHO <= 2
+WHAT <= 2
+WHEN <= 1
+WHERE <= 1
+WHY <= 1
+HOW <= 1
+TOTAL TAGS <= 8
 ```
 
-Then attach candidate qualifiers:
+Prefer specific spans:
 
-- time or validity period
-- place or affected area
-- cause, purpose, concern, or motivation
-- method, mechanism, platform, or capability
-- quantity or status when it describes the event
+- keep "US Department of Defense" over "US";
+- keep "E-2D Advanced Hawkeye aircraft" over "aircraft";
+- keep "missile defense system" over "system".
 
-Reject a candidate event if no clear predicate/action/state can be identified.
-
-## S6_ROLE_5W1H
-
-For each accepted event, create one `event_hyperedge` that connects the event to its 5W1H nodes.
-
-Do not attach 5W1H nodes directly to a cluster.
-
-Ask role questions event by event:
-
-- who: actor, source, owner, participant, affected party
-- what: action, state, claim, system, object, result
-- when: event time, report time, as-of time, deadline, plan time
-- where: location, affected area, platform, base, facility
-- why: cause, purpose, risk, motivation, concern
-- how: method, mechanism, capability, procedure, platform
-
-## S7_RELATION_LINK
-
-Add `relation_hyperedges` between events only when useful.
-
-Prefer these patterns:
-
-- disclosure event -> status events: `discloses`
-- concern or threat -> action: `motivates`
-- background plan -> assessment: `background_of`
-- system component -> larger inventory/project: `component_of`
-- capability/configuration -> operational advantage: `supports` or `enables`
-
-## S8_STABILITY_VALIDATE
+## S4_VALIDATE
 
 Check:
 
-- every cluster has a `root_event`
-- every cluster event exists in `events`
-- every event references an event hyperedge
-- every event hyperedge references existing nodes
-- every relation hyperedge references existing events
-- relation names come from the controlled vocabulary
-- no global flat 5W1H table is produced
+- `schema_version` is `ceh-record-v2`;
+- each record has `Text`, `Root_Event`, `Tags`, `Missing`, and `Event_Hyperedge`;
+- `Tag_Text == Text[Tag_Start:Tag_End]`;
+- no duplicate `5W1H_Label + normalize(Tag_Text)` pairs;
+- role caps are respected;
+- each hyperedge index points to an existing tag of the matching role;
+- missing roles are listed in uppercase.
 
-For high-confidence mode, compare independent passes:
+Use:
 
-- stable: same event meaning and role assignment repeats
-- unstable: same approximate event but role, boundary, or relation changes
-- missed: central evidence-backed event absent from a pass
+```text
+python ceh-5w1h/scripts/validate_ceh_record_output.py output.json
+```
 
-Prefer stable root events. Review unstable and missed events before adding them.
+## Optional Global Index
+
+Only when requested with `global_index=true`:
+
+```text
+S0_READ_RECORD
+  -> S1_ROOT_EVENT
+  -> S2_TAGS
+  -> S3_DEDUP
+  -> S4_VALIDATE
+  -> S5_GLOBAL_INDEX
+```
+
+`S5_GLOBAL_INDEX` may project records into `sentences`, `nodes`, `events`, `event_hyperedges`, `relation_hyperedges`, and `event_clusters`, but it must not reintroduce duplicate nodes.

@@ -2,11 +2,14 @@
 
 ## Top-Level Checks
 
-- Output uses `schema_version: "ceh-5w1h-v1"`.
-- Output contains `sentences`, `nodes`, `events`, `event_hyperedges`, `relation_hyperedges`, and `event_clusters`.
-- IDs are compact and stable: `S*`, `N*`, `E*`, `HE*`, `RH*`, `EC*`.
+- Default output uses `schema_version: "ceh-record-v2"`.
+- Default output contains `records`, not a global `nodes` dump.
+- Each record keeps `Text` and `Tags` together.
+- Use `ceh-5w1h-v1` only when `global_index=true`.
 
-## Cluster Checks
+## Optional Global-Index Cluster Checks
+
+Apply these checks only when the user requests `global_index=true` or asks for a cluster diagram.
 
 - Every `event_clusters.*.root_event` exists in `events`.
 - Every listed event belongs to the same topic thread.
@@ -16,20 +19,30 @@
 ## Event Checks
 
 - Every event has a short factual summary.
-- Every event has one event hyperedge.
+- Every default record has exactly one `Root_Event`.
+- Every default record has one `Event_Hyperedge`.
 - Do not promote every technical detail to an event.
 - Do not promote quantities, equipment specs, or quotation fragments to events unless they express a central state, action, or claim.
-- Mark only root or central events as `main: true`.
 - Root events should have high cluster explanation power, not merely early position.
 
 ## 5W1H Checks
 
-- 5W1H nodes attach to events through `event_hyperedges`.
-- Every event hyperedge has exactly six node groups: `who`, `what`, `when`, `where`, `why`, `how`.
-- Empty groups use `[]` and are listed in `missing`.
+- 5W1H spans live in record-level `Tags`.
+- `Tag_Text` must equal `Text[Tag_Start:Tag_End]`.
+- `Event_Hyperedge` indexes point to `Tags`, not global node ids.
+- Every event hyperedge has exactly six role groups: `who`, `what`, `when`, `where`, `why`, `how`.
+- Empty groups use `[]` and are listed in `Missing`.
 - Preserve source wording for weapons, dates, places, quantities, and organization names.
 - Every non-empty node should answer a role question for the specific event, not for the whole document.
 - Do not borrow `why` or `how` from a neighboring event unless a relation hyperedge supports the connection.
+
+## Dedup Checks
+
+- No duplicate `5W1H_Label + normalize(Tag_Text)` pairs inside one record.
+- `WHO <= 2`, `WHAT <= 2`, `WHEN/WHERE/WHY/HOW <= 1`.
+- Default total tags per record is `<= 8`.
+- Prefer specific spans over generic substrings.
+- Do not output standalone generic spans when a longer useful span exists.
 
 ## Diagram Checks
 
