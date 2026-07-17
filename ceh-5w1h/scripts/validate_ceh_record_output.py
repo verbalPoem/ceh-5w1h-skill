@@ -28,7 +28,9 @@ ROLE_CAPS = {
     "HOW": 2,
 }
 TOTAL_TAG_CAP = 12
-RELIABILITY_LABELS = {"direct", "inferred", "converted"}
+EVIDENCE_STATUSES = {"explicit", "implicit", "converted"}
+RELIABILITY_LABELS = {"reliable", "partially_reliable", "unreliable"}
+LEGACY_EVIDENCE_LABELS = {"direct", "inferred", "converted"}
 
 
 def normalize(text: str) -> str:
@@ -40,7 +42,7 @@ def normalize(text: str) -> str:
 def load_json(path: str) -> Any:
     if path == "-":
         return json.load(sys.stdin)
-    with Path(path).open("r", encoding="utf-8") as fh:
+    with Path(path).open("r", encoding="utf-8-sig") as fh:
         return json.load(fh)
 
 
@@ -126,7 +128,7 @@ def validate_tags(
         tag = require_dict(raw_tag, tag_path, errors)
         require_keys(
             tag,
-            ("Tag_Text", "Tag_Start", "Tag_End", "5W1H_Label", "Reliability_Label"),
+            ("Tag_Text", "Tag_Start", "Tag_End", "5W1H_Label"),
             tag_path,
             errors,
         )
@@ -135,7 +137,20 @@ def validate_tags(
             errors.append(f"{tag_path}.5W1H_Label must be one of {', '.join(LABELS)}")
         else:
             role_counts[label] += 1
-        if tag.get("Reliability_Label") not in RELIABILITY_LABELS:
+        evidence_status = tag.get("Evidence_Status")
+        reliability_label = tag.get("Reliability_Label")
+        uses_legacy_evidence = evidence_status is None and reliability_label in LEGACY_EVIDENCE_LABELS
+        if evidence_status is None and not uses_legacy_evidence:
+            errors.append(
+                f"{tag_path}.Evidence_Status is required and must be one of "
+                f"{', '.join(sorted(EVIDENCE_STATUSES))}"
+            )
+        elif evidence_status is not None and evidence_status not in EVIDENCE_STATUSES:
+            errors.append(
+                f"{tag_path}.Evidence_Status must be one of "
+                f"{', '.join(sorted(EVIDENCE_STATUSES))}"
+            )
+        if reliability_label is not None and not uses_legacy_evidence and reliability_label not in RELIABILITY_LABELS:
             errors.append(
                 f"{tag_path}.Reliability_Label must be one of "
                 f"{', '.join(sorted(RELIABILITY_LABELS))}"

@@ -1,0 +1,141 @@
+{
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "batch_test_01_L0160",
+      "Text": "太平洋空军官员表示，RQ-4全球鹰无人机首次在日本三泽空军基地部署进展顺利，迄今为止天气原因未对飞行出动架次造成任何实质影响。    美国夏威夷珍珠港-Hickam联合基地太平洋空军作战一体化主管Dan Wolf上校7月初对空军杂志表示，位于日本北部的作业地点被证明很理想。他说，很早就得出结论，对我们来说，由于天气原因，迁移更好，并且全球鹰能够比在关岛安德森空军基地更频繁地升空，并减少恶劣天气导致的延误。 他说，日本航空自卫队很高兴具备从三泽操纵无人机的能力，并且很感兴趣看到它如何运行。日本已经对扩大无人情报、监视和侦察装备投资表示兴趣，具体地说就是采购全球鹰无人机。Wolf说，把部署看做与日本航空自卫队盟友进行未来讨论的机会。PACAF官员表示，目前没有将全球鹰转移到日本其它空军基地的计划，如冲绳嘉手纳。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "RQ-4全球鹰无人机首次在日本三泽空军基地部署进展顺利",
+        "Trigger": {
+          "Tag_Text": "部署",
+          "Tag_Start": 31,
+          "Tag_End": 33
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "太平洋空军官员",
+          "Tag_Start": 0,
+          "Tag_End": 7,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "RQ-4全球鹰无人机首次在日本三泽空军基地部署进展顺利",
+          "Tag_Start": 10,
+          "Tag_End": 37,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "日本三泽空军基地",
+          "Tag_Start": 23,
+          "Tag_End": 31,
+          "5W1H_Label": "WHERE",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "由于天气原因",
+          "Tag_Start": 154,
+          "Tag_End": 160,
+          "5W1H_Label": "WHY",
+          "Evidence_Status": "explicit"
+        }
+      ],
+      "Missing": [
+        "WHEN",
+        "HOW"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [
+          0
+        ],
+        "what": [
+          1
+        ],
+        "when": [],
+        "where": [
+          2
+        ],
+        "why": [
+          3
+        ],
+        "how": []
+      }
+    },
+    {
+      "Id": "batch_test_01_L0289",
+      "Text": "俄罗斯空军信息保障处处长弗拉基米尔・德里克中校宣布，在新的训练年度，俄罗斯联邦空军基本战斗序列将组建7个战役司令部，同时继续对高空歼击-截击机进行现代化改造，并计划装备5个营的S-400防空导弹系统。  在新的训练年度，由航空基地和空天防御旅组成的7个战役司令部将构成俄罗斯空军战斗序列的基础。将继续米格-31高空歼击-截击机改进升级为米格-31BM的工作，并计划装备5个营的S-400防空导弹系统。所有作战兵团和部队的编制结构将符合常备标准，并在和平时期和战时保持一致的数量。将特别关注军人的社会保障问题，其中包括军人的住房保障。  在2009年俄罗斯空军接装了4个大队的改进型苏-27SM、一批经现代化改造的米-24PM直升机和苏-25SM强击机。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "俄罗斯联邦空军将在新的训练年度组建7个战役司令部，并继续改造高空歼击机及计划装备S-400防空导弹系统",
+        "Trigger": {
+          "Tag_Text": "组建",
+          "Tag_Start": 48,
+          "Tag_End": 50
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "俄罗斯联邦空军",
+          "Tag_Start": 34,
+          "Tag_End": 41,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "俄罗斯联邦空军基本战斗序列将组建7个战役司令部",
+          "Tag_Start": 34,
+          "Tag_End": 57,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "继续对高空歼击-截击机进行现代化改造，并计划装备5个营的S-400防空导弹系统",
+          "Tag_Start": 60,
+          "Tag_End": 99,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "新的训练年度",
+          "Tag_Start": 27,
+          "Tag_End": 33,
+          "5W1H_Label": "WHEN",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "由航空基地和空天防御旅组成",
+          "Tag_Start": 110,
+          "Tag_End": 123,
+          "5W1H_Label": "HOW",
+          "Evidence_Status": "explicit"
+        }
+      ],
+      "Missing": [
+        "WHERE",
+        "WHY"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [
+          0
+        ],
+        "what": [
+          1,
+          2
+        ],
+        "when": [
+          3
+        ],
+        "where": [],
+        "why": [],
+        "how": [
+          4
+        ]
+      }
+    }
+  ]
+}

@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 """Convert legacy global CEH JSON into record-first CEH v2 JSON.
 
+This is a loss-reducing view conversion, not a semantic extractor. It preserves
+legacy WHY/HOW labels for later model or human review and never accepts or
+rejects them from cue words.
+
 Usage:
   python convert_ceh_global_to_record_view.py old_ceh.json new_record_v2.json
 """
@@ -57,29 +61,6 @@ GENERIC_TERMS = {
     "army",
     "air force",
 }
-METHOD_MARKERS = ("利用", "通过", "采用", "使用", "借助", "基于", "依托", "以")
-METHOD_BOUNDARIES = ("展示", "演示", "部署", "完成", "提高", "击落", "拦截", "摧毁", "交付", "授予")
-METHOD_SIGNALS = (
-    "建模",
-    "制导",
-    "雷达",
-    "传感器",
-    "数据链",
-    "通信",
-    "火控",
-    "自动",
-    "计算机",
-    "激光",
-    "仿真",
-    "测试",
-    "升级",
-    "modeling",
-    "guidance",
-    "radar",
-    "sensor",
-    "laser",
-    "computer",
-)
 VENUE_TERMS = ("法院", "法庭", "会议", "论坛", "基地", "港口", "海域", "地区", "现场")
 TRIGGER_FALLBACKS = (
     "公开",
@@ -135,38 +116,6 @@ def normalize(text: str) -> str:
 
 
 GENERIC_NORMS = {normalize(item) for item in GENERIC_TERMS}
-
-
-def has_method_signal(text: str) -> bool:
-    lowered = text.casefold()
-    return any(marker in text for marker in METHOD_MARKERS) or any(signal in lowered for signal in METHOD_SIGNALS)
-
-
-def overlap_ratio(a: Candidate, b: Candidate) -> float:
-    overlap = max(0, min(a.end, b.end) - max(a.start, b.start))
-    if overlap == 0:
-        return 0.0
-    return overlap / max(1, min(a.end - a.start, b.end - b.start))
-
-
-def refine_how_span(record_text: str, start: int, end: int) -> tuple[int, int] | None:
-    """Shrink noisy HOW spans to a method phrase when a marker is present."""
-    segment = record_text[start:end]
-    marker_positions = [(segment.find(marker), marker) for marker in METHOD_MARKERS if segment.find(marker) >= 0]
-    if not marker_positions:
-        return (start, end) if has_method_signal(segment) else None
-
-    marker_pos, _marker = min(marker_positions, key=lambda item: item[0])
-    tail = segment[marker_pos:]
-    boundary_indexes = [tail.find(boundary) for boundary in METHOD_BOUNDARIES if tail.find(boundary) > 0]
-    punctuation_indexes = [tail.find(punct) for punct in ("，", "。", "；", ";", ",", ".") if tail.find(punct) > 0]
-    stop_candidates = boundary_indexes + punctuation_indexes
-    stop = min(stop_candidates) if stop_candidates else len(tail)
-    new_start = start + marker_pos
-    new_end = new_start + stop
-    if new_end <= new_start:
-        return None
-    return new_start, new_end
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -339,11 +288,6 @@ def collect_candidates(
             )
             if span is None:
                 continue
-            if label == "HOW":
-                refined_span = refine_how_span(record_text, span[0], span[1])
-                if refined_span is None:
-                    continue
-                span = refined_span
             confidence = node.get("confidence", 0.0)
             if not isinstance(confidence, (int, float)):
                 confidence = 0.0
@@ -401,17 +345,6 @@ def deduplicate_candidates(candidates: list[Candidate]) -> list[Candidate]:
             and any(item.norm and (item.norm in who_norm or who_norm in item.norm) for who_norm in who_norms)
         )
     ]
-    what_items = [item for item in values if item.label == "WHAT"]
-    values = [
-        item
-        for item in values
-        if not (
-            item.label == "HOW"
-            and not has_method_signal(item.text)
-            and any(overlap_ratio(item, other) >= 0.5 for other in what_items)
-        )
-    ]
-
     capped: list[Candidate] = []
     for label in LABELS:
         role_items = [item for item in values if item.label == label]
@@ -461,7 +394,7 @@ def make_record(cluster_id: str, cluster: dict[str, Any], data: dict[str, Any]) 
                 "Tag_Start": candidate.start,
                 "Tag_End": candidate.end,
                 "5W1H_Label": candidate.label,
-                "Reliability_Label": "converted",
+                "Evidence_Status": "converted",
             }
         )
         hyperedge_indexes[candidate.label.lower()].append(index)

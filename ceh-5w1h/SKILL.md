@@ -1,220 +1,223 @@
 ---
 name: ceh-5w1h
-description: Record-first Clustered Event Hypergraph for 5W1H Extraction. Use when asked to extract auditable 5W1H tags without fragmentation, keep each source text beside its tags, select one root event per record, deduplicate repeated role spans, build event-centric knowledge hypergraphs, model event-to-event relations, draw 5W1H diagrams, compare extraction stability, or produce structured data for knowledge hypergraph construction from news, military, policy, incident, technical, or report text.
+description: Cluster-first Chinese 5W1H extraction and Clustered Event Hypergraph construction. Use for news, military, policy, incident, technical, or report text when Codex must first discover coherent event clusters, identify a small set of related events inside each cluster, extract exact-span WHO/WHAT/WHEN/WHERE/WHY/HOW nodes for every accepted event, connect events with controlled relations, deduplicate aliases, validate offsets and semantics, and require an independent critic-agent review before release.
 ---
 
 # CEH-5W1H
 
-## Overview
+## Purpose
 
-Use this skill to extract **record-first Clustered Event Hypergraphs for 5W1H**.
-
-Keep each source `Text` beside its extracted `Tags` so humans can audit offsets immediately. Treat 5W1H as the internal structure of one root event per record, not as a global node dump.
-
-Core idea:
+Build a readable, auditable event hypergraph without shredding the text:
 
 ```text
-Record Text -> Root Event -> Deduplicated 5W1H Tags -> Event Hyperedge -> Optional Global Index
+Text
+  -> Event Clusters
+  -> Central + Supporting Events
+  -> Per-Event 5W1H Nodes
+  -> Event Hyperedges + Event Relations
+  -> Independent Critic
+  -> Repair + Deterministic Validation
 ```
 
-Default output is valid JSON unless the user asks for a diagram or explanation.
+Default to precision over coverage. A missing role or rejected side event is better than a plausible but weak node.
 
-## Resource Loading
+## Required References
 
-Always read:
+Read these before extraction:
 
-- `references/schema.md` before producing JSON.
-- `references/state-machine.md` before processing multi-record or noisy input.
-- `references/role-coverage.md` before selecting 5W1H tags.
-- `references/deduplication.md` before producing tags.
-- `references/algorithm-playbook.md` when the task needs higher-quality extraction, paper-style method explanation, or a noisy multi-event document.
-- `references/quality-checks.md` before final output.
+- `references/schema.md`
+- `references/cluster-policy.md`
+- `references/state-machine.md`
+- `references/role-coverage.md`
+- `references/semantic-role-reasoning.md`
+- `references/deduplication.md`
+- `references/reviewer-protocol.md`
+- `references/quality-checks.md`
 
 Read as needed:
 
-- `references/relation-vocabulary.md` only when producing optional event-to-event relations or global index output.
-- `references/diagram-guide.md` when the user asks to draw or explain the structure.
+- `references/chinese-calibration-cases.md` for Chinese boundary examples.
+- `references/cross-lingual-calibration.md` and `references/gold-calibration.md` for dataset work.
+- `references/algorithm-playbook.md` for method explanations or difficult records.
+- `references/relation-vocabulary.md` before adding event relations.
+- `references/reliability.md` only when reliability labels are requested.
+- `references/diagram-guide.md` when drawing the graph.
 
-## Default Workflow
+## Strict Default Workflow
 
-1. Process one record or one source text at a time.
-2. Select exactly one `Root_Event` unless the user explicitly asks for `full_detail` or `global_index`.
-3. Extract 5W1H spans as inline `Tags` beside the same `Text`.
-4. Deduplicate tags inside the record before output.
-5. Enforce default caps: WHO <= 5, WHAT <= 2, WHEN/WHERE <= 1 each, WHY/HOW <= 2 each, total tags <= 12.
-6. Project tag indexes into one `Event_Hyperedge`.
-7. Validate offsets, duplicate tags, missing roles, and role caps.
-8. Produce optional `ceh-5w1h-v1` global index only when explicitly requested.
+1. Process exactly one source record at a time.
+2. Segment the record into exact-offset evidence sentences `S1...Sn`.
+3. Discover coherent event clusters before selecting events. Do not equate a paragraph or sentence with a cluster.
+4. For each cluster, select exactly one central event and only relation-critical supporting events.
+5. Require every accepted event to have a distinct predicate, an independently useful fact, and direct evidence.
+6. Extract 5W1H separately for every accepted event. Freeze that event's predicate and reject roles belonging only to neighboring events.
+7. Store exact spans as record-local nodes `N1...Nn`; reuse the same node ID when the same referent and role is shared by multiple events.
+8. Connect each event and its 5W1H nodes with one event hyperedge.
+9. Add only evidence-backed event relations from the controlled vocabulary.
+10. Run an independent critic Agent, apply its valid corrections, then run structural and risk validators.
+
+Do not expose scratch reasoning. Return JSON, a compact table, or a diagram as requested.
+
+## Cluster And Event Guardrails
+
+Typical defaults:
+
+```text
+clusters per record: 1-3
+events per cluster:  1 central + 0-2 supporting
+hard event maximum:  5 per cluster
+```
+
+Exceed the typical range only when distinct predicates and explicit relations make the extra structure necessary.
+
+Do not promote these to standalone events:
+
+- repeated mentions or paraphrases of the same fact;
+- numerical breakdowns, specifications, or ranked lists that only qualify one state;
+- a quote or reporting shell when a stronger embedded event exists;
+- a consequence, capability, or background fact with no useful relation to the cluster's central event.
+
+Do retain a supporting event when removing it would erase a distinct causal, motivational, implementation, opposition, disclosure, or contrast relation.
+
+## Per-Event Role Tests
+
+For each event `E`, ask all six questions against the frozen predicate of `E`:
+
+- `who`: minimal actors, targets, affected parties, challengers, monitors, or implementers.
+- `what`: compact central action or state plus its required object or result.
+- `when`: the time, deadline, or as-of time belonging to `E`.
+- `where`: the physical or institutional setting, platform, affected area, or deployment site of `E`.
+- `why`: a cause, motivation, purpose, justification, enabling condition, challenge, or risk that explains `E`.
+- `how`: a means, manner, instrument, mechanism, procedure, ordered step, or implementation that realizes `E`.
+
+For WHY and HOW, compare candidate proposition `C` with event proposition `E`:
+
+```text
+C causes, motivates, justifies, enables, or gives the purpose of E -> why
+C is the means, manner, mechanism, procedure, or implementation of E -> how
+E produces C as a result                                            -> neither
+C only shares the topic                                             -> reject
+```
+
+Use semantic direction, not cue words. An unmarked relation may be retained as `implicit` when local discourse strongly supports it. Never infer it from world knowledge.
+
+## Candidate Policy
+
+Caps apply per event and are maxima, not slots:
+
+```text
+who:   typical 1-3, hard maximum 5
+what:  typical 1,   hard maximum 2
+when:  hard maximum 1
+where: hard maximum 1
+why:   typical 0-1, hard maximum 2
+how:   typical 0-1, hard maximum 2
+total: usually 2-6, hard maximum 12
+```
+
+Deduplicate record-local nodes by `Node_Type + normalized referent/text`. Collapse aliases, titles, pronouns, and repeated mentions that denote one participant. Reject clause-length WHO nodes.
 
 ## Output Contract
 
-Use `schema_version: "ceh-record-v2"` by default.
+Use `schema_version: "ceh-cluster-v3"` by default:
 
 ```json
 {
-  "schema_version": "ceh-record-v2",
+  "schema_version": "ceh-cluster-v3",
   "records": [
     {
-      "Id": "sample id",
+      "Id": "R1",
       "Text": "source text",
-      "Root_Event": {
-        "Event_Id": "E1",
-        "Event_Text": "center event summary",
-        "Trigger": {
-          "Tag_Text": "trigger",
-          "Tag_Start": 0,
-          "Tag_End": 0
+      "Sentences": [],
+      "Nodes": [],
+      "Event_Clusters": [
+        {
+          "Cluster_Id": "EC1",
+          "Topic": "coherent event-chain topic",
+          "Central_Event": "E1",
+          "Events": [],
+          "Relations": []
         }
-      },
-      "Tags": [],
-      "Missing": [],
-      "Event_Hyperedge": {
-        "event": "E1",
-        "who": [],
-        "what": [],
-        "when": [],
-        "where": [],
-        "why": [],
-        "how": []
+      ],
+      "Cross_Cluster_Relations": [],
+      "Review": {
+        "Mode": "independent_agent",
+        "Status": "passed",
+        "Reviewer": "semantic_critic",
+        "Issues_Found": [],
+        "Changes_Made": []
       }
     }
   ]
 }
 ```
 
-The important distinction:
-
-- `Text` and `Tags` live in the same record for easy comparison.
-- `Tags` use FLARES-style fields: `Tag_Text`, `Tag_Start`, `Tag_End`, `5W1H_Label`, `Reliability_Label`.
-- `Event_Hyperedge` connects the root event to tag indexes, not to a huge global `nodes` object.
-- `ceh-5w1h-v1` global index is optional and must be requested with `global_index=true`.
-
-## Event Cluster Rule
-
-Create an event cluster only in optional global-index mode or diagram explanations.
-
-Do not create a cluster for every paragraph automatically. In default record-first mode, the record itself is the audit unit and has one root event.
-
-Good cluster examples:
-
-- A disclosure event plus several inventory-status events.
-- A concern event plus its background plan and demonstration event.
-- An exhibition event plus capability/configuration/supporting events.
-- A construction announcement plus deployment sites and capability effects.
-
-## Root Event Selection
-
-Choose the root event with a transparent centrality rule:
+Every sentence and node uses half-open record offsets:
 
 ```text
-root_score =
-  source_position
-  + predicate_salience
-  + relation_degree
-  + evidence_density
-  + cluster_explanation_power
-  - side_detail_penalty
+Text[Tag_Start:Tag_End] == Tag_Text
 ```
 
-Prefer events that explain the cluster, organize related details, and can be read as the main claim or essential content. Do not choose a capability detail, quantity, quote, or background sentence as root if it only supports another event.
+Use `Evidence_Status: explicit|implicit|converted`. Add `Reliability_Label` only when requested.
 
-## Coarse-to-Fine Extraction
+Detailed fields and a complete example are in `references/schema.md`.
 
-For each record:
+## Mandatory Review Gate
 
-1. Create a coarse skeleton: `who -> predicate -> what`.
-2. Add directly connected participants, then qualifiers: `when`, `where`, `why`, `how`, quantities, status, conditions.
-3. Convert the enriched skeleton into an event hyperedge.
-4. Keep rejected details out of `Tags` unless they fill a capped role in the root event's causal, legal, operational, or opposition context.
+The extractor's first output is never final.
 
-This prevents the model from turning every sentence into an event while preserving useful fine-grained information.
+When sub-agents are available:
 
-## Role Questioning
+1. Give a fresh critic Agent only the raw record, candidate JSON, schema, and review checklist.
+2. Ask it to audit cluster boundaries, event duplication, central-event choice, per-event role attachment, WHY/HOW direction, node boundaries, offsets, and relation evidence.
+3. Apply supported corrections.
+4. Re-run the critic when it found a major cluster or event error.
+5. Record the result in `Review` with `Mode: "independent_agent"`.
 
-Extract 5W1H by asking role-specific questions against one event at a time:
+When sub-agents are unavailable, run a separated self-critic pass and set:
+
+```json
+{"Mode": "self_critic_fallback", "Status": "needs_human_review"}
+```
+
+Never describe fallback self-review as an independent Agent review.
+
+## Validation
+
+After semantic review, run:
 
 ```text
-who: who is the adjudicator/source/actor, regulated target, challenger, owner, participant, victim, affected party, monitoring group, or opposition group?
-what: what action, claim, status, system, object, or result is central?
-when: when did/will it happen, or what is the validity/as-of time?
-where: where did/will it happen, or what forum, court, venue, area, system, or location is affected?
-why: what cause, legal challenge, rejected rationale, motivation, risk, purpose, or claimed reason is stated?
-how: what method, mechanism, order, required action, administrative measure, platform, capability, or procedure is stated?
+python scripts/validate_ceh_cluster_output.py output.json
+python scripts/validate_ceh_cluster_semantic_output.py output.json --report risk-report.json
 ```
 
-Return exact source spans with `Tag_Start` and `Tag_End`. If a role is not stated, omit the tag and list the role in `Missing`.
+The second script is a deterministic risk linter. It cannot certify event meaning, causality, or method.
 
-## Deduplication And Caps
+For batch work:
 
-Before final output:
+- send one record per extraction call;
+- run one critic review per record;
+- retry only the failed record;
+- reset extraction context after at most 100 completed records;
+- keep unresolved records in a review queue.
 
-- Deduplicate by `5W1H_Label + normalize(Tag_Text)` inside each record.
-- Prefer longer, more specific spans over generic substrings in the same role.
-- Prefer an actor/source interpretation over `WHERE` when a country or organization performs the action, but allow the same span as both `WHO` and `WHERE` when it is explicitly a forum, court, meeting, base, site, or venue.
-- Avoid standalone generic terms such as "system", "missile", "plan", or "currently" unless they are part of a more specific phrase.
-- Enforce default caps: WHO <= 5, WHAT <= 2, WHEN/WHERE <= 1 each, WHY/HOW <= 2 each, total tags <= 12.
-- Do not drop directly connected participants just because they are not the grammatical subject.
+## Compatibility Modes
 
-## Stability Mode
-
-When the user asks for reliability, robustness, paper-style extraction, or high-confidence output, run or simulate multiple independent extraction passes:
-
-- `stable`: event or node appears with the same meaning in most passes.
-- `unstable`: event or node appears inconsistently, has conflicting boundaries, or changes role.
-- `missed`: important evidence-backed event was absent from a pass.
-
-Use `scripts/compare_ceh_outputs.py` to compare JSON outputs when multiple output files exist. Otherwise, perform the same check mentally before finalizing the JSON.
-
-## Relation Vocabulary
-
-Use these relation types by default:
-
-```text
-discloses
-supports
-motivates
-causes
-part_of
-component_of
-background_of
-enables
-contrasts_with
-```
-
-Do not invent relation names unless the user explicitly asks for an extension. If unsure, prefer `background_of` or omit the relation.
-
-## Diagram Mode
-
-When the user asks to "draw", "show the graph", "paint it", or "make it readable", do not let the diagram replace 5W1H extraction.
-
-Output order:
-
-1. A compact 5W1H table for every displayed root event.
-2. Mermaid diagram showing event clusters, root events, and the six 5W1H role nodes for each displayed root event.
-3. Optional relation hyperedges between events.
-
-If the document contains many clusters, split diagrams into batches or show a compact overview plus per-cluster 5W1H diagrams. Do not omit 5W1H roles just to keep one diagram small.
-
-In diagrams:
-
-- Use `EC*` for event clusters.
-- Use `E*` for events.
-- Show six 5W1H role nodes for each displayed root event: `who`, `what`, `when`, `where`, `why`, `how`.
-- Use `missing` when a 5W1H role is not stated.
-- Use relation labels from the controlled vocabulary.
-- Do not use generic `B*` background nodes as a replacement for event nodes or 5W1H nodes.
+- `root_only=true`: emit the previous `ceh-record-v2` one-root-event view.
+- `global_index=true`: project validated v3 records into the legacy global `ceh-5w1h-v1` index.
+- `full_detail=true`: allow more supporting events, while keeping separate 5W1H hyperedges.
+- `stability=true`: compare independent extraction passes before critic review.
+- `reliability=true`: add reliability labels without changing role selection.
 
 ## Non-Negotiables
 
-- Do not flatten a document into one global 5W1H table.
-- Do not split every sentence into an event.
-- Do not output a giant global `nodes` object unless the user asks for `global_index=true`.
-- Do not process multiple records as one merged extraction unit.
-- Do not over-compress `WHO` to only the grammatical subject; include central participants connected to the root event.
-- Do not create event relations without evidence.
-- Do not attach 5W1H nodes directly to clusters; attach them to events through `event_hyperedges`.
-- Do not draw an event relation diagram without also showing the relevant event's 5W1H roles.
-- Do not use `reports`; use `discloses` for disclosure/reporting relations.
-- Do not promote quantities, equipment features, or quotes to standalone events unless they are central claims or states.
-- Do not fill 5W1H from world knowledge; use stated or directly implied evidence only.
-- Keep `S*`, `N*`, `E*`, `HE*`, `RH*`, and `EC*` IDs stable and compact.
+- Do not skip cluster discovery and jump directly to one global 5W1H frame.
+- Do not create one cluster or event per sentence mechanically.
+- Do not attach 5W1H nodes directly to a cluster; attach them to a specific event hyperedge.
+- Do not let two events represent the same proposition with different wording.
+- Do not use one event's WHY, HOW, WHEN, or WHERE for another event.
+- Do not emit a WHO span containing an event predicate.
+- Do not turn every country, organization, quantity, weapon, or repeated alias into a node.
+- Do not assign WHY or HOW from lexical markers.
+- Do not invent missing roles or event relations from world knowledge.
+- Do not call output final before independent semantic review and deterministic validation.

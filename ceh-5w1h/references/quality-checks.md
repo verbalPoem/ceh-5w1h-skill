@@ -1,83 +1,108 @@
-# CEH-5W1H Quality Checks
+# CEH-5W1H Quality Gates
 
-## Top-Level Checks
+Passing syntax or offsets is not evidence of semantic accuracy. Release requires four gates.
 
-- Default output uses `schema_version: "ceh-record-v2"`.
-- Default output contains `records`, not a global `nodes` dump.
-- Each record keeps `Text` and `Tags` together.
-- Use `ceh-5w1h-v1` only when `global_index=true`.
+## Gate A: Cluster And Event Semantics
 
-## Optional Global-Index Cluster Checks
+- Cluster discovery happened before role extraction.
+- Independent briefs are in separate clusters.
+- Every cluster has exactly one central event.
+- Supporting events have distinct predicates and useful controlled relations.
+- Repeated claims, quantities, specifications, and aliases are not separate events.
+- The central event organizes the cluster rather than merely appearing first.
 
-Apply these checks only when the user requests `global_index=true` or asks for a cluster diagram.
+Failure here returns to cluster/event selection. Do not try to repair bad decomposition by adding more nodes.
 
-- Every `event_clusters.*.root_event` exists in `events`.
-- Every listed event belongs to the same topic thread.
-- A cluster is not just a paragraph wrapper; it should preserve a coherent issue or story.
-- A cluster should not contain unrelated independent briefs.
+## Gate B: Per-Event 5W1H Semantics
 
-## Event Checks
+For every event:
 
-- Every event has a short factual summary.
-- Every default record has exactly one `Root_Event`.
-- Every default record has one `Event_Hyperedge`.
-- Do not promote every technical detail to an event.
-- Do not promote quantities, equipment specs, or quotation fragments to events unless they express a central state, action, or claim.
-- Root events should have high cluster explanation power, not merely early position.
+- all roles attach to its frozen predicate;
+- WHO nodes are minimal entities, not clauses;
+- WHAT contains the event action/state and required object/result;
+- WHEN and WHERE belong to this event;
+- WHY is a supported explanatory proposition with direction `C -> E`;
+- HOW is a supported means/procedure proposition with direction `C -> E`;
+- consequences, topic similarity, and neighboring-event details are rejected;
+- aliases and repeated mentions are collapsed;
+- `Missing` is preferred over a weak answer.
 
-## 5W1H Checks
+Cue words are neither necessary nor sufficient for WHY/HOW.
 
-- 5W1H spans live in record-level `Tags`.
-- `Tag_Text` must equal `Text[Tag_Start:Tag_End]`.
-- `Event_Hyperedge` indexes point to `Tags`, not global node ids.
-- Every event hyperedge has exactly six role groups: `who`, `what`, `when`, `where`, `why`, `how`.
-- Empty groups use `[]` and are listed in `Missing`.
-- Preserve source wording for weapons, dates, places, quantities, and organization names.
-- Every non-empty node should answer a role question for the specific event, not for the whole document.
-- Do not borrow `why` or `how` from a neighboring event unless a relation hyperedge supports the connection.
+## Gate C: Independent Agent Review
 
-## Dedup Checks
+Follow `reviewer-protocol.md`.
 
-- No duplicate `5W1H_Label + normalize(Tag_Text)` pairs inside one record.
-- `WHO <= 5`, `WHAT <= 2`, `WHEN/WHERE <= 1`, `WHY/HOW <= 2`.
-- Default total tags per record is `<= 12`.
-- Prefer specific spans over generic substrings.
-- Do not output standalone generic spans when a longer useful span exists.
-- Do not drop central participants merely because they are connected through cause, opposition, implementation, or affected-party context.
+- The critic receives raw text and candidate output, not hidden extractor reasoning.
+- It checks clusters before events, and events before roles.
+- Valid corrections are applied.
+- Major semantic corrections are re-reviewed.
+- The record's `Review` object accurately states `independent_agent` or `self_critic_fallback`.
+- Fallback review remains `needs_human_review`.
 
-## Diagram Checks
+An extractor's own second pass is useful but is not an independent review.
 
-- If a Mermaid diagram is requested, it must not replace 5W1H extraction.
-- Every displayed root event must show six 5W1H roles in the diagram or in an adjacent 5W1H table.
-- Use `missing` for absent roles; do not silently omit absent roles.
-- Do not use generic background nodes such as `B1` as substitutes for event frames or 5W1H nodes.
-- For many clusters, split diagrams into batches rather than deleting 5W1H roles.
+## Gate D: Deterministic Validation
 
-## Relation Checks
+Run:
 
-- Every relation hyperedge references existing source and target events.
-- Relation type must be in the controlled vocabulary.
-- Do not create dense all-to-all event links.
-- Use `discloses`, not `reports`.
-- Use `motivates` only when the source event/claim drives the target event.
-- Use `causes` only when causality is explicit.
+```text
+python scripts/validate_ceh_cluster_output.py output.json
+python scripts/validate_ceh_cluster_semantic_output.py output.json --report risk-report.json
+```
 
-## Stability Checks
+The structural validator checks:
 
-- Stable items repeat across independent passes with the same meaning.
-- Unstable items have shifting role boundaries, relation labels, or event granularity.
-- Missed items are central evidence-backed events absent from one pass.
-- Do not add side details simply because one pass extracted them.
-- Use `scripts/compare_ceh_outputs.py` when comparing multiple CEH JSON files.
+- schema and required fields;
+- exact sentence, node, and trigger offsets;
+- unique IDs and valid references;
+- node types and hyperedge role groups;
+- per-event caps and exact `Missing`;
+- relation endpoints and evidence IDs;
+- review metadata.
 
-## Failure Patterns
+The risk linter flags:
 
-- Flattening a whole document into one 5W1H table.
-- Extracting every sentence as an independent event.
-- Losing event relations and returning only isolated hyperedges.
-- Attaching 5W1H nodes to clusters instead of events.
-- Using unsupported relation names.
-- Omitting evidence IDs.
-- Choosing a side detail as the cluster root.
-- Filling missing roles from background knowledge instead of source evidence.
-- Drawing only event clusters/relations while omitting 5W1H roles.
+- unusually dense clusters or events;
+- duplicate event summaries or identical hyperedges;
+- supporting events with no relation;
+- long or clause-like WHO nodes;
+- suspicious WHAT, WHEN, WHERE, WHY, and HOW spans;
+- attribution-shell triggers and other known boundary risks.
+
+Neither script understands causality or method.
+
+## Batch Drift Checks
+
+- One source record per extraction call.
+- One candidate record per critic call.
+- No state carried across records.
+- Context reset after at most 100 completed records.
+- Failed records retried independently.
+- Unresolved records kept in a review queue.
+- Mean clusters, events, nodes, WHO count, and WHY/HOW fill rates monitored over time.
+
+Drift warnings:
+
+- nearly every sentence becomes an event;
+- most clusters hit the hard event cap;
+- the same actor is recreated as multiple nodes;
+- most events have non-empty WHY/HOW despite sparse source evidence;
+- later batches contain longer WHO/WHAT spans than earlier batches;
+- independent critic revisions rise sharply.
+
+## Known Release-Blocking Failures
+
+- direct extraction to one root event skipped cluster discovery;
+- one paragraph was treated as one cluster without semantic testing;
+- numerical procurement or inventory details became many events;
+- one event borrowed another event's time, place, cause, or method;
+- repeated aliases created separate nodes;
+- WHO contains predicates or full clauses;
+- WHY/HOW came from marker matching;
+- event relations express only topic similarity;
+- the risk linter was described as a semantic Agent;
+- fallback self-review was labeled independent;
+- valid JSON was called high quality without gold evaluation.
+
+Measured quality still requires comparison against a manually annotated, independently reviewed Chinese gold sample. The gates prevent known failures; they do not guarantee perfect extraction.

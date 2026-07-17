@@ -1,0 +1,36 @@
+{
+  "validator": "ceh-cluster-risk-lint-v3",
+  "source": "examples\\ceh-cluster-v3-output.json",
+  "status": "review",
+  "semantic_roles_verified": false,
+  "cluster_semantics_verified": false,
+  "independent_agent_review_required": true,
+  "summary": {
+    "records": 9,
+    "tags": 33,
+    "errors": 0,
+    "warnings": 1,
+    "avg_tags_per_record": 3.667,
+    "avg_who_per_record": 1.556,
+    "role_counts": {
+      "WHO": 14,
+      "WHAT": 11,
+      "WHEN": 3,
+      "WHERE": 3,
+      "WHY": 1,
+      "HOW": 1
+    },
+    "issue_counts": {
+      "warning:EVENT_DENSE": 1
+    },
+    "issues_truncated": false
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "code": "EVENT_DENSE",
+      "record_id": "R3/EC1",
+      "message": "cluster has 4 events; each event needs a distinct predicate and relation"
+    }
+  ]
+}
