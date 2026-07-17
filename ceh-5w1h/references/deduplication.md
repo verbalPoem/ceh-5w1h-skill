@@ -1,101 +1,126 @@
-# Deduplication Rules
+# Deduplication And Selection
 
-Apply these rules before producing `ceh-record-v2`.
+## Contents
+
+- Text normalization and exact duplicates
+- Nested aliases and local coreference
+- Clause and role-conflict guards
+- Candidate ranking, cardinality, and generic spans
+
+Apply these rules after semantic role assignment and before offset generation.
 
 ## Normalize
 
-For duplicate comparison:
-
 ```text
-normalize(text) = lowercase/casefold + trimmed whitespace + collapsed spaces
+normalize(text) = casefold + trim + collapse whitespace
 ```
 
-For Chinese text, also remove spaces between characters when they are only formatting noise.
+For Chinese, remove spaces that are only formatting noise between Chinese characters.
 
-## Exact Duplicate Rule
+## Exact Duplicate
 
-Inside one record, the key must be unique:
+The key must be unique inside one record:
 
 ```text
-5W1H_Label + normalize(Tag_Text)
+Node_Type + normalize(Tag_Text)
 ```
 
-If duplicates exist, keep the candidate with:
+Keep the candidate with the best event linkage, semantic fit, and source offset.
 
-1. exact offset match;
-2. longer and more specific span;
-3. earlier source position;
-4. higher confidence, if available.
+## Nested Same-Referent Spans
 
-## Substring Rule
+Collapse nested aliases that refer to the same participant:
 
-Within the same role, prefer the more specific span:
+```text
+俄罗斯 + 俄罗斯空军 + 俄罗斯联邦空军 -> 俄罗斯联邦空军
+美国 + 美国国务院                   -> 美国国务院
+```
 
-- keep "美国国务院" over "美国";
-- keep "E-2D先进鹰眼预警机" over "飞机";
-- keep "海基雷达系统" over "系统";
-- keep "2014年11月5日至7日" over "2014年".
+Do not collapse distinct referents merely because one string contains another:
 
-Do not keep a generic substring if the longer phrase fills the same role.
+```text
+日本 + 日本捕鲸船队 -> keep both when both are central participants
+```
 
-## Role Conflict Rule
+For other roles, retain the shortest span that is complete. A longer clause does not win merely because it contains more words.
 
-When the same text could be more than one role:
+## Coreference Duplicate
 
-- country or organization as actor/source/owner -> `WHO`;
-- country or region as affected/deployment location -> `WHERE`;
-- court, meeting, base, forum, or venue may be both `WHO` and `WHERE` if the text explicitly uses it as both actor/source and institutional or physical setting;
-- system/platform/object being acted on -> `WHAT`;
-- capability, method, mechanism, or procedure -> `HOW`;
-- purpose, risk, cause, or motivation -> `WHY`.
+Create a record-local identity key before selecting WHO tags:
 
-Do not output the same `Tag_Text` as both `WHO` and `WHERE` in the same record unless the text explicitly uses it in both functions.
+```text
+full name + short name + title + pronoun -> one participant identity
+```
+
+Examples:
+
+```text
+国际法院 + 法院                         -> keep 国际法院
+谢尔盖·绍益古 + 俄罗斯国防部长 + 他     -> keep the clearest named mention
+俄罗斯 + 该国                           -> keep 俄罗斯 when both refer to the same actor
+```
+
+Do not emit a pronoun as a second WHO merely because it has a different offset. Frequency supports confidence but never creates additional nodes.
+
+## Clause Guard
+
+Reject WHO and WHERE candidates that include an event predicate. Reject spans containing unrelated coordinated clauses.
+
+Common invalid WHO endings:
+
+```text
+宣布  表示  称  将组建  将构成  计划部署  进行测试  完成采购
+```
+
+## Role Conflict
+
+Assign a span to the question it answers best:
+
+- entity/noun phrase -> WHO;
+- central action/state -> WHAT;
+- event time -> WHEN;
+- event setting -> WHERE;
+- cause/purpose/rationale -> WHY;
+- means/manner/procedure -> HOW.
+
+Allow exact WHO/WHERE reuse only for an explicit forum or site with both functions. Do not duplicate text across other roles.
+
+## Candidate Ranking
+
+Use this priority:
+
+1. direct connection to the current event predicate;
+2. correct semantic role;
+3. concise completeness;
+4. explicit source span;
+5. headline/lead or root-sentence proximity;
+6. frequency/coreference support;
+7. earlier position.
+
+Drop a candidate when its role confidence is lower than the false-positive risk. `Missing` is a valid result.
+
+## Cardinality
+
+Caps are maxima:
+
+```text
+WHO typical 1-3, max 5
+WHAT typical 1, max 2
+WHEN max 1
+WHERE max 1
+WHY typical 0-1, max 2
+HOW typical 0-1, max 2
+TOTAL typical 2-6; 7+ needs explicit justification; max 12
+```
+
+The second answer for a role must be non-overlapping in meaning and indispensable. Never select extra candidates simply because capacity remains.
 
 ## Generic Span Guard
 
-Avoid standalone generic tags when a more specific span exists in the record:
+Reject standalone generic spans when a specific phrase exists:
 
 ```text
-系统
-导弹
-武器
-飞机
-潜艇
-计划
-目前
-公司
-海军
-空军
-陆军
-中心
+系统  导弹  武器  飞机  潜艇  计划  项目  目前  公司  海军  空军
 ```
 
-These words may appear inside a longer specific tag.
-
-## Caps
-
-Default caps:
-
-```text
-WHO <= 5
-WHAT <= 2
-WHEN <= 1
-WHERE <= 1
-WHY <= 2
-HOW <= 2
-TOTAL <= 12
-```
-
-If too many candidates remain:
-
-1. keep tags attached to the root event;
-2. keep tags with exact offsets;
-3. keep longer specific spans;
-4. keep earlier spans;
-5. drop side details.
-
-## Missing Roles
-
-If a role has no retained tag, add the uppercase label to `Missing`.
-
-Do not fill missing roles from world knowledge.
+These words may remain inside a specific entity or action phrase.

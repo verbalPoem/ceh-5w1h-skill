@@ -1,0 +1,97 @@
+{
+  "records": 1753,
+  "tags": 7485,
+  "offset_mismatches": 0,
+  "roles": {
+    "WHO": {
+      "records_present": 1137,
+      "record_presence_rate": 0.6486,
+      "tags": 1981,
+      "mean_tags_per_record": 1.1301,
+      "max_tags_per_record": 8,
+      "span_length_p50": 20,
+      "span_length_p90": 47,
+      "span_length_max": 211,
+      "reliability_counts": {
+        "confiable": 1511,
+        "no confiable": 132,
+        "semiconfiable": 338
+      }
+    },
+    "WHAT": {
+      "records_present": 1514,
+      "record_presence_rate": 0.8637,
+      "tags": 2949,
+      "mean_tags_per_record": 1.6823,
+      "max_tags_per_record": 27,
+      "span_length_p50": 22,
+      "span_length_p90": 53,
+      "span_length_max": 195,
+      "reliability_counts": {
+        "confiable": 1909,
+        "no confiable": 454,
+        "semiconfiable": 586
+      }
+    },
+    "WHEN": {
+      "records_present": 652,
+      "record_presence_rate": 0.3719,
+      "tags": 840,
+      "mean_tags_per_record": 0.4792,
+      "max_tags_per_record": 4,
+      "span_length_p50": 18,
+      "span_length_p90": 38,
+      "span_length_max": 102,
+      "reliability_counts": {
+        "confiable": 618,
+        "no confiable": 42,
+        "semiconfiable": 180
+      }
+    },
+    "WHERE": {
+      "records_present": 614,
+      "record_presence_rate": 0.3503,
+      "tags": 867,
+      "mean_tags_per_record": 0.4946,
+      "max_tags_per_record": 11,
+      "span_length_p50": 16,
+      "span_length_p90": 39,
+      "span_length_max": 377,
+      "reliability_counts": {
+        "confiable": 716,
+        "no confiable": 42,
+        "semiconfiable": 109
+      }
+    },
+    "WHY": {
+      "records_present": 219,
+      "record_presence_rate": 0.1249,
+      "tags": 245,
+      "mean_tags_per_record": 0.1398,
+      "max_tags_per_record": 4,
+      "span_length_p50": 35,
+      "span_length_p90": 79,
+      "span_length_max": 154,
+      "reliability_counts": {
+        "confiable": 157,
+        "no confiable": 48,
+        "semiconfiable": 40
+      }
+    },
+    "HOW": {
+      "records_present": 496,
+      "record_presence_rate": 0.2829,
+      "tags": 603,
+      "mean_tags_per_record": 0.344,
+      "max_tags_per_record": 6,
+      "span_length_p50": 22,
+      "span_length_p90": 49,
+      "span_length_max": 200,
+      "reliability_counts": {
+        "confiable": 289,
+        "no confiable": 197,
+        "semiconfiable": 117
+      }
+    }
+  }
+}

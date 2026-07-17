@@ -1,0 +1,831 @@
+{
+  "schema_version": "ceh-cluster-v3",
+  "records": [
+    {
+      "Id": "R1",
+      "Text": "俄核战争计划可能带来的灾难性后果。",
+      "Sentences": [
+        {
+          "Sentence_Id": "S1",
+          "Tag_Text": "俄核战争计划可能带来的灾难性后果。",
+          "Tag_Start": 0,
+          "Tag_End": 17
+        }
+      ],
+      "Nodes": [
+        {
+          "Node_Id": "N1",
+          "Node_Type": "who",
+          "Tag_Text": "俄",
+          "Tag_Start": 0,
+          "Tag_End": 1,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N2",
+          "Node_Type": "what",
+          "Tag_Text": "核战争计划可能带来的灾难性后果",
+          "Tag_Start": 1,
+          "Tag_End": 16,
+          "Evidence_Status": "explicit"
+        }
+      ],
+      "Event_Clusters": [
+        {
+          "Cluster_Id": "EC1",
+          "Topic": "俄罗斯核战争计划的潜在后果",
+          "Central_Event": "E1",
+          "Events": [
+            {
+              "Event_Id": "E1",
+              "Event_Level": "central",
+              "Event_Text": "俄罗斯核战争计划可能带来灾难性后果",
+              "Trigger": {
+                "Tag_Text": "带来",
+                "Tag_Start": 8,
+                "Tag_End": 10
+              },
+              "Evidence": [
+                "S1"
+              ],
+              "Missing": [
+                "when",
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE1",
+                "Event": "E1",
+                "Nodes": {
+                  "who": [
+                    "N1"
+                  ],
+                  "what": [
+                    "N2"
+                  ],
+                  "when": [],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            }
+          ],
+          "Relations": []
+        }
+      ],
+      "Cross_Cluster_Relations": [],
+      "Review": {
+        "Mode": "independent_agent",
+        "Status": "passed",
+        "Reviewer": "semantic_critic_agent",
+        "Issues_Found": [],
+        "Changes_Made": []
+      }
+    },
+    {
+      "Id": "R2",
+      "Text": "韩国在过去的13年中从国外采购军备的开支为45.8万亿韩元，其中美国是最大的销售国，约占韩国引进武器装备总额的80％。根据韩国国防采办计划管理局提交的数据，从2006年至2018年，韩国采购美国军备的支出总计达35.8万亿韩元。数据显示，在与美国的总交易中，有24.8万亿韩元是政府间的外国军售合同，其余11万亿韩元是商业交易。其中签署的最大合同是购买40架F-35A隐形战机的合同，价值超过7万亿韩元。到目前为止韩国已经引进了8架F-35A，从3月下旬才有2架，上周才首次向公众展示了这些战斗机。政府计划到2021年全部部署40架F-35A。数据显示，从国家来看，德国是韩国的第二大武器销售国，为4.1万亿韩元，其次是英国，为1.38万亿韩元，以色列为1.27万亿韩元。",
+      "Sentences": [
+        {
+          "Sentence_Id": "S1",
+          "Tag_Text": "韩国在过去的13年中从国外采购军备的开支为45.8万亿韩元，其中美国是最大的销售国，约占韩国引进武器装备总额的80％。",
+          "Tag_Start": 0,
+          "Tag_End": 59
+        },
+        {
+          "Sentence_Id": "S2",
+          "Tag_Text": "根据韩国国防采办计划管理局提交的数据，从2006年至2018年，韩国采购美国军备的支出总计达35.8万亿韩元。",
+          "Tag_Start": 59,
+          "Tag_End": 114
+        },
+        {
+          "Sentence_Id": "S3",
+          "Tag_Text": "数据显示，在与美国的总交易中，有24.8万亿韩元是政府间的外国军售合同，其余11万亿韩元是商业交易。",
+          "Tag_Start": 114,
+          "Tag_End": 164
+        },
+        {
+          "Sentence_Id": "S4",
+          "Tag_Text": "其中签署的最大合同是购买40架F-35A隐形战机的合同，价值超过7万亿韩元。",
+          "Tag_Start": 164,
+          "Tag_End": 202
+        },
+        {
+          "Sentence_Id": "S5",
+          "Tag_Text": "到目前为止韩国已经引进了8架F-35A，从3月下旬才有2架，上周才首次向公众展示了这些战斗机。",
+          "Tag_Start": 202,
+          "Tag_End": 249
+        },
+        {
+          "Sentence_Id": "S6",
+          "Tag_Text": "政府计划到2021年全部部署40架F-35A。",
+          "Tag_Start": 249,
+          "Tag_End": 272
+        },
+        {
+          "Sentence_Id": "S7",
+          "Tag_Text": "数据显示，从国家来看，德国是韩国的第二大武器销售国，为4.1万亿韩元，其次是英国，为1.38万亿韩元，以色列为1.27万亿韩元。",
+          "Tag_Start": 272,
+          "Tag_End": 336
+        }
+      ],
+      "Nodes": [
+        {
+          "Node_Id": "N1",
+          "Node_Type": "who",
+          "Tag_Text": "韩国",
+          "Tag_Start": 0,
+          "Tag_End": 2,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N2",
+          "Node_Type": "who",
+          "Tag_Text": "美国",
+          "Tag_Start": 32,
+          "Tag_End": 34,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N3",
+          "Node_Type": "what",
+          "Tag_Text": "从国外采购军备的开支为45.8万亿韩元",
+          "Tag_Start": 10,
+          "Tag_End": 29,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N4",
+          "Node_Type": "what",
+          "Tag_Text": "美国是最大的销售国，约占韩国引进武器装备总额的80％",
+          "Tag_Start": 32,
+          "Tag_End": 58,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N5",
+          "Node_Type": "when",
+          "Tag_Text": "过去的13年中",
+          "Tag_Start": 3,
+          "Tag_End": 10,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N7",
+          "Node_Type": "what",
+          "Tag_Text": "已经引进了8架F-35A",
+          "Tag_Start": 209,
+          "Tag_End": 221,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N8",
+          "Node_Type": "when",
+          "Tag_Text": "到目前为止",
+          "Tag_Start": 202,
+          "Tag_End": 207,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N9",
+          "Node_Type": "what",
+          "Tag_Text": "计划到2021年全部部署40架F-35A",
+          "Tag_Start": 251,
+          "Tag_End": 271,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N10",
+          "Node_Type": "when",
+          "Tag_Text": "到2021年",
+          "Tag_Start": 253,
+          "Tag_End": 259,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N11",
+          "Node_Type": "who",
+          "Tag_Text": "政府",
+          "Tag_Start": 249,
+          "Tag_End": 251,
+          "Evidence_Status": "explicit"
+        }
+      ],
+      "Event_Clusters": [
+        {
+          "Cluster_Id": "EC1",
+          "Topic": "韩国国外军备采购与F-35A装备进程",
+          "Central_Event": "E1",
+          "Events": [
+            {
+              "Event_Id": "E1",
+              "Event_Level": "central",
+              "Event_Text": "韩国过去13年国外军备采购支出45.8万亿韩元，美国约占80%",
+              "Trigger": {
+                "Tag_Text": "采购",
+                "Tag_Start": 13,
+                "Tag_End": 15
+              },
+              "Evidence": [
+                "S1"
+              ],
+              "Missing": [
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE1",
+                "Event": "E1",
+                "Nodes": {
+                  "who": [
+                    "N1",
+                    "N2"
+                  ],
+                  "what": [
+                    "N3",
+                    "N4"
+                  ],
+                  "when": [
+                    "N5"
+                  ],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            },
+            {
+              "Event_Id": "E2",
+              "Event_Level": "supporting",
+              "Event_Text": "韩国目前已引进8架F-35A",
+              "Trigger": {
+                "Tag_Text": "引进",
+                "Tag_Start": 211,
+                "Tag_End": 213
+              },
+              "Evidence": [
+                "S5"
+              ],
+              "Missing": [
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE2",
+                "Event": "E2",
+                "Nodes": {
+                  "who": [
+                    "N1"
+                  ],
+                  "what": [
+                    "N7"
+                  ],
+                  "when": [
+                    "N8"
+                  ],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            },
+            {
+              "Event_Id": "E3",
+              "Event_Level": "supporting",
+              "Event_Text": "政府计划到2021年部署40架F-35A",
+              "Trigger": {
+                "Tag_Text": "部署",
+                "Tag_Start": 261,
+                "Tag_End": 263
+              },
+              "Evidence": [
+                "S6"
+              ],
+              "Missing": [
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE3",
+                "Event": "E3",
+                "Nodes": {
+                  "who": [
+                    "N11"
+                  ],
+                  "what": [
+                    "N9"
+                  ],
+                  "when": [
+                    "N10"
+                  ],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            }
+          ],
+          "Relations": [
+            {
+              "Relation_Id": "R1",
+              "Source_Event": "E2",
+              "Relation": "component_of",
+              "Target_Event": "E1",
+              "Evidence": [
+                "S4",
+                "S5"
+              ]
+            },
+            {
+              "Relation_Id": "R2",
+              "Source_Event": "E2",
+              "Relation": "background_of",
+              "Target_Event": "E3",
+              "Evidence": [
+                "S5",
+                "S6"
+              ]
+            }
+          ]
+        }
+      ],
+      "Cross_Cluster_Relations": [],
+      "Review": {
+        "Mode": "independent_agent",
+        "Status": "revised",
+        "Reviewer": "semantic_critic_agent",
+        "Issues_Found": [
+          {
+            "Code": "WHY_HOW",
+            "Event_Id": "E1",
+            "Message": "交易金额构成是统计分解，不是总体采购状态的实现方式。"
+          },
+          {
+            "Code": "EVIDENCE_SCOPE",
+            "Event_Id": "E2",
+            "Message": "S1不直接支撑已引进8架F-35A。"
+          },
+          {
+            "Code": "ROLE_ATTACHMENT",
+            "Event_Id": "E3",
+            "Message": "部署计划的显式行动主体是“政府”，不是较宽泛的“韩国”。"
+          }
+        ],
+        "Changes_Made": [
+          "删除E1的HOW节点N6并移除无关证据S3。",
+          "E2仅保留S5作为证据。",
+          "E3仅保留S6作为证据，并新增WHO节点“政府”。"
+        ]
+      }
+    },
+    {
+      "Id": "R3",
+      "Text": "美国国防大学国家战略研究所2020年11月11日发布《2020年战略评估》报告，报告中推测朝鲜拥有15至60枚核弹头，以及大约650枚弹道导弹，这些导弹对韩国、日本及整个东亚地区的稳定构成威胁。 报告指出，估计有120万名朝鲜士兵以进攻性姿态部署在朝韩非军事区，对韩国和日本构成常规威胁。此外，朝鲜在庆祝劳动党成立75周年的阅兵式上展示了一种新型洲际弹道导弹，并声称能够打击到美国本土。该报告认为，朝鲜这种发展大规模杀伤性武器，在非军事区大规模部署军队的行动，对东亚地区的稳定和全球秩序构成威胁。 报告还指出，朝鲜向伊朗出售和转让军事技术，帮助其发展弹道导弹。",
+      "Sentences": [
+        {
+          "Sentence_Id": "S1",
+          "Tag_Text": "美国国防大学国家战略研究所2020年11月11日发布《2020年战略评估》报告，报告中推测朝鲜拥有15至60枚核弹头，以及大约650枚弹道导弹，这些导弹对韩国、日本及整个东亚地区的稳定构成威胁。",
+          "Tag_Start": 0,
+          "Tag_End": 97
+        },
+        {
+          "Sentence_Id": "S2",
+          "Tag_Text": "报告指出，估计有120万名朝鲜士兵以进攻性姿态部署在朝韩非军事区，对韩国和日本构成常规威胁。",
+          "Tag_Start": 98,
+          "Tag_End": 144
+        },
+        {
+          "Sentence_Id": "S3",
+          "Tag_Text": "此外，朝鲜在庆祝劳动党成立75周年的阅兵式上展示了一种新型洲际弹道导弹，并声称能够打击到美国本土。",
+          "Tag_Start": 144,
+          "Tag_End": 193
+        },
+        {
+          "Sentence_Id": "S4",
+          "Tag_Text": "该报告认为，朝鲜这种发展大规模杀伤性武器，在非军事区大规模部署军队的行动，对东亚地区的稳定和全球秩序构成威胁。",
+          "Tag_Start": 193,
+          "Tag_End": 248
+        },
+        {
+          "Sentence_Id": "S5",
+          "Tag_Text": "报告还指出，朝鲜向伊朗出售和转让军事技术，帮助其发展弹道导弹。",
+          "Tag_Start": 249,
+          "Tag_End": 280
+        }
+      ],
+      "Nodes": [
+        {
+          "Node_Id": "N2",
+          "Node_Type": "who",
+          "Tag_Text": "朝鲜",
+          "Tag_Start": 45,
+          "Tag_End": 47,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N3",
+          "Node_Type": "what",
+          "Tag_Text": "对东亚地区的稳定和全球秩序构成威胁",
+          "Tag_Start": 230,
+          "Tag_End": 247,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N5",
+          "Node_Type": "where",
+          "Tag_Text": "东亚地区",
+          "Tag_Start": 231,
+          "Tag_End": 235,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N6",
+          "Node_Type": "why",
+          "Tag_Text": "朝鲜这种发展大规模杀伤性武器，在非军事区大规模部署军队的行动",
+          "Tag_Start": 199,
+          "Tag_End": 229,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N7",
+          "Node_Type": "what",
+          "Tag_Text": "拥有15至60枚核弹头，以及大约650枚弹道导弹",
+          "Tag_Start": 47,
+          "Tag_End": 71,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N8",
+          "Node_Type": "who",
+          "Tag_Text": "朝鲜士兵",
+          "Tag_Start": 111,
+          "Tag_End": 115,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N9",
+          "Node_Type": "who",
+          "Tag_Text": "韩国",
+          "Tag_Start": 132,
+          "Tag_End": 134,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N10",
+          "Node_Type": "who",
+          "Tag_Text": "日本",
+          "Tag_Start": 135,
+          "Tag_End": 137,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N11",
+          "Node_Type": "what",
+          "Tag_Text": "120万名朝鲜士兵以进攻性姿态部署在朝韩非军事区",
+          "Tag_Start": 106,
+          "Tag_End": 130,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N12",
+          "Node_Type": "where",
+          "Tag_Text": "朝韩非军事区",
+          "Tag_Start": 124,
+          "Tag_End": 130,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N13",
+          "Node_Type": "how",
+          "Tag_Text": "以进攻性姿态",
+          "Tag_Start": 115,
+          "Tag_End": 121,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N14",
+          "Node_Type": "who",
+          "Tag_Text": "美国",
+          "Tag_Start": 188,
+          "Tag_End": 190,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N15",
+          "Node_Type": "what",
+          "Tag_Text": "展示了一种新型洲际弹道导弹",
+          "Tag_Start": 166,
+          "Tag_End": 179,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N16",
+          "Node_Type": "what",
+          "Tag_Text": "声称能够打击到美国本土",
+          "Tag_Start": 181,
+          "Tag_End": 192,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N17",
+          "Node_Type": "where",
+          "Tag_Text": "庆祝劳动党成立75周年的阅兵式上",
+          "Tag_Start": 150,
+          "Tag_End": 166,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N18",
+          "Node_Type": "who",
+          "Tag_Text": "伊朗",
+          "Tag_Start": 258,
+          "Tag_End": 260,
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Node_Id": "N19",
+          "Node_Type": "what",
+          "Tag_Text": "向伊朗出售和转让军事技术",
+          "Tag_Start": 257,
+          "Tag_End": 269,
+          "Evidence_Status": "explicit"
+        }
+      ],
+      "Event_Clusters": [
+        {
+          "Cluster_Id": "EC1",
+          "Topic": "《2020年战略评估》对朝鲜军事能力及地区威胁的评估",
+          "Central_Event": "E1",
+          "Events": [
+            {
+              "Event_Id": "E1",
+              "Event_Level": "central",
+              "Event_Text": "报告认为朝鲜发展大规模杀伤性武器并大规模部署军队威胁东亚稳定和全球秩序",
+              "Trigger": {
+                "Tag_Text": "构成威胁",
+                "Tag_Start": 243,
+                "Tag_End": 247
+              },
+              "Evidence": [
+                "S1",
+                "S2",
+                "S4"
+              ],
+              "Missing": [
+                "when",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE1",
+                "Event": "E1",
+                "Nodes": {
+                  "who": [
+                    "N2",
+                    "N9",
+                    "N10"
+                  ],
+                  "what": [
+                    "N3"
+                  ],
+                  "when": [],
+                  "where": [
+                    "N5"
+                  ],
+                  "why": [
+                    "N6"
+                  ],
+                  "how": []
+                }
+              }
+            },
+            {
+              "Event_Id": "E2",
+              "Event_Level": "supporting",
+              "Event_Text": "报告估计朝鲜拥有15至60枚核弹头和约650枚弹道导弹",
+              "Trigger": {
+                "Tag_Text": "拥有",
+                "Tag_Start": 47,
+                "Tag_End": 49
+              },
+              "Evidence": [
+                "S1"
+              ],
+              "Missing": [
+                "when",
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE2",
+                "Event": "E2",
+                "Nodes": {
+                  "who": [
+                    "N2"
+                  ],
+                  "what": [
+                    "N7"
+                  ],
+                  "when": [],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            },
+            {
+              "Event_Id": "E3",
+              "Event_Level": "supporting",
+              "Event_Text": "报告估计120万名朝鲜士兵以进攻姿态部署在朝韩非军事区",
+              "Trigger": {
+                "Tag_Text": "部署",
+                "Tag_Start": 121,
+                "Tag_End": 123
+              },
+              "Evidence": [
+                "S2"
+              ],
+              "Missing": [
+                "when",
+                "why"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE3",
+                "Event": "E3",
+                "Nodes": {
+                  "who": [
+                    "N8"
+                  ],
+                  "what": [
+                    "N11"
+                  ],
+                  "when": [],
+                  "where": [
+                    "N12"
+                  ],
+                  "why": [],
+                  "how": [
+                    "N13"
+                  ]
+                }
+              }
+            },
+            {
+              "Event_Id": "E4",
+              "Event_Level": "supporting",
+              "Event_Text": "朝鲜在阅兵式展示新型洲际弹道导弹并声称可打击美国本土",
+              "Trigger": {
+                "Tag_Text": "展示",
+                "Tag_Start": 166,
+                "Tag_End": 168
+              },
+              "Evidence": [
+                "S3"
+              ],
+              "Missing": [
+                "when",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE4",
+                "Event": "E4",
+                "Nodes": {
+                  "who": [
+                    "N2",
+                    "N14"
+                  ],
+                  "what": [
+                    "N15",
+                    "N16"
+                  ],
+                  "when": [],
+                  "where": [
+                    "N17"
+                  ],
+                  "why": [],
+                  "how": []
+                }
+              }
+            }
+          ],
+          "Relations": [
+            {
+              "Relation_Id": "R1",
+              "Source_Event": "E2",
+              "Relation": "supports",
+              "Target_Event": "E1",
+              "Evidence": [
+                "S1",
+                "S4"
+              ]
+            },
+            {
+              "Relation_Id": "R2",
+              "Source_Event": "E3",
+              "Relation": "supports",
+              "Target_Event": "E1",
+              "Evidence": [
+                "S2",
+                "S4"
+              ]
+            },
+            {
+              "Relation_Id": "R3",
+              "Source_Event": "E4",
+              "Relation": "supports",
+              "Target_Event": "E1",
+              "Evidence": [
+                "S3",
+                "S4"
+              ]
+            }
+          ]
+        },
+        {
+          "Cluster_Id": "EC2",
+          "Topic": "朝鲜向伊朗转让军事技术",
+          "Central_Event": "E5",
+          "Events": [
+            {
+              "Event_Id": "E5",
+              "Event_Level": "central",
+              "Event_Text": "报告称朝鲜向伊朗出售和转让军事技术",
+              "Trigger": {
+                "Tag_Text": "出售和转让",
+                "Tag_Start": 260,
+                "Tag_End": 265
+              },
+              "Evidence": [
+                "S5"
+              ],
+              "Missing": [
+                "when",
+                "where",
+                "why",
+                "how"
+              ],
+              "Event_Hyperedge": {
+                "Hyperedge_Id": "HE5",
+                "Event": "E5",
+                "Nodes": {
+                  "who": [
+                    "N2",
+                    "N18"
+                  ],
+                  "what": [
+                    "N19"
+                  ],
+                  "when": [],
+                  "where": [],
+                  "why": [],
+                  "how": []
+                }
+              }
+            }
+          ],
+          "Relations": []
+        }
+      ],
+      "Cross_Cluster_Relations": [],
+      "Review": {
+        "Mode": "independent_agent",
+        "Status": "revised",
+        "Reviewer": "semantic_critic_agent",
+        "Issues_Found": [
+          {
+            "Code": "ROLE_ATTACHMENT",
+            "Event_Id": "E1",
+            "Message": "报告发布机构和发布日期属于归因外壳，不属于“构成威胁”事件。"
+          },
+          {
+            "Code": "ROLE_ATTACHMENT",
+            "Event_Id": "E3",
+            "Message": "韩国和日本是威胁事件的受影响方，不是部署事件的参与者。"
+          },
+          {
+            "Code": "WHY_HOW",
+            "Event_Id": "E5",
+            "Message": "“帮助其发展弹道导弹”在原文中是结果/作用，不能强制解释为转让行为的WHY。"
+          },
+          {
+            "Code": "EVIDENCE_SCOPE",
+            "Event_Id": "E4",
+            "Message": "阅兵式展示事件应由S3直接支撑，无需加入S1。"
+          }
+        ],
+        "Changes_Made": [
+          "删除发布机构N1和发布日期N4，并将WHEN列入E1、E2的Missing。",
+          "将韩国、日本从部署事件E3移至总体威胁事件E1的WHO。",
+          "E4与E5仅保留直接证据句。",
+          "删除E5的WHY节点N20，并收紧E5事件摘要。"
+        ]
+      }
+    }
+  ]
+}

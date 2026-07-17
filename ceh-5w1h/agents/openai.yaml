@@ -1,4 +1,4 @@
 interface:
-  display_name: "CEH-5W1H"
-  short_description: "Record-first root-event 5W1H with participant coverage"
-  default_prompt: "Use $ceh-5w1h to extract one root event and participant-complete auditable 5W1H tags in ceh-record-v2 from the following text."
+  display_name: "CEH-5W1H Cluster"
+  short_description: "Cluster-first Chinese 5W1H event hypergraphs"
+  default_prompt: "Use $ceh-5w1h to discover event clusters first, retain one central event plus only relation-critical supporting events in each cluster, extract exact-span 5W1H nodes per event, build event hyperedges and controlled relations, then require an independent critic Agent and deterministic validation before returning ceh-cluster-v3."

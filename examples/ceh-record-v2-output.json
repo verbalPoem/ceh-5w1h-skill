@@ -19,28 +19,28 @@
           "Tag_Start": 0,
           "Tag_End": 3,
           "5W1H_Label": "WHO",
-          "Reliability_Label": "direct"
+          "Evidence_Status": "explicit"
         },
         {
           "Tag_Text": "北约和美国的导弹防御系统将如何危及俄罗斯的安全",
           "Tag_Start": 29,
           "Tag_End": 52,
           "5W1H_Label": "WHAT",
-          "Reliability_Label": "direct"
+          "Evidence_Status": "explicit"
         },
         {
           "Tag_Text": "在欧洲",
           "Tag_Start": 24,
           "Tag_End": 27,
           "5W1H_Label": "WHERE",
-          "Reliability_Label": "direct"
+          "Evidence_Status": "explicit"
         },
         {
           "Tag_Text": "计算机建模",
           "Tag_Start": 17,
           "Tag_End": 22,
           "5W1H_Label": "HOW",
-          "Reliability_Label": "direct"
+          "Evidence_Status": "explicit"
         }
       ],
       "Missing": [

@@ -1,0 +1,171 @@
+{
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "zh-implicit-why-001",
+      "Text": "关键零部件连续两周未到货，工厂将首批设备的交付期限推迟到下月。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "工厂将首批设备的交付期限推迟到下月",
+        "Trigger": {
+          "Tag_Text": "推迟",
+          "Tag_Start": 25,
+          "Tag_End": 27
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "工厂",
+          "Tag_Start": 13,
+          "Tag_End": 15,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "工厂将首批设备的交付期限推迟",
+          "Tag_Start": 13,
+          "Tag_End": 27,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "下月",
+          "Tag_Start": 28,
+          "Tag_End": 30,
+          "5W1H_Label": "WHEN",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "关键零部件连续两周未到货",
+          "Tag_Start": 0,
+          "Tag_End": 12,
+          "5W1H_Label": "WHY",
+          "Evidence_Status": "implicit",
+          "Reliability_Label": "reliable"
+        }
+      ],
+      "Missing": [
+        "WHERE",
+        "HOW"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [0],
+        "what": [1],
+        "when": [2],
+        "where": [],
+        "why": [3],
+        "how": []
+      }
+    },
+    {
+      "Id": "zh-predicate-attachment-002",
+      "Text": "周三，市政府批准新防洪工程。施工单位将分三期加固堤坝。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "市政府批准新防洪工程",
+        "Trigger": {
+          "Tag_Text": "批准",
+          "Tag_Start": 6,
+          "Tag_End": 8
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "市政府",
+          "Tag_Start": 3,
+          "Tag_End": 6,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "市政府批准新防洪工程",
+          "Tag_Start": 3,
+          "Tag_End": 13,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "周三",
+          "Tag_Start": 0,
+          "Tag_End": 2,
+          "5W1H_Label": "WHEN",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        }
+      ],
+      "Missing": [
+        "WHERE",
+        "WHY",
+        "HOW"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [0],
+        "what": [1],
+        "when": [2],
+        "where": [],
+        "why": [],
+        "how": []
+      }
+    },
+    {
+      "Id": "zh-implicit-how-003",
+      "Text": "工程团队先拆除旧雷达，再安装新阵列，完成了系统升级。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "工程团队完成系统升级",
+        "Trigger": {
+          "Tag_Text": "完成",
+          "Tag_Start": 18,
+          "Tag_End": 20
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "工程团队",
+          "Tag_Start": 0,
+          "Tag_End": 4,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "完成了系统升级",
+          "Tag_Start": 18,
+          "Tag_End": 25,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit",
+          "Reliability_Label": "reliable"
+        },
+        {
+          "Tag_Text": "先拆除旧雷达，再安装新阵列",
+          "Tag_Start": 4,
+          "Tag_End": 17,
+          "5W1H_Label": "HOW",
+          "Evidence_Status": "implicit",
+          "Reliability_Label": "reliable"
+        }
+      ],
+      "Missing": [
+        "WHEN",
+        "WHERE",
+        "WHY"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [0],
+        "what": [1],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": [2]
+      }
+    }
+  ]
+}

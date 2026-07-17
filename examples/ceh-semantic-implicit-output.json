@@ -1,0 +1,117 @@
+{
+  "schema_version": "ceh-record-v2",
+  "records": [
+    {
+      "Id": "implicit-why-001",
+      "Text": "项目预算被削减，研发团队只能暂停原型机测试。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "研发团队暂停原型机测试",
+        "Trigger": {
+          "Tag_Text": "暂停",
+          "Tag_Start": 14,
+          "Tag_End": 16
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "研发团队",
+          "Tag_Start": 8,
+          "Tag_End": 12,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "研发团队只能暂停原型机测试",
+          "Tag_Start": 8,
+          "Tag_End": 21,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "项目预算被削减",
+          "Tag_Start": 0,
+          "Tag_End": 7,
+          "5W1H_Label": "WHY",
+          "Evidence_Status": "implicit"
+        }
+      ],
+      "Missing": [
+        "WHEN",
+        "WHERE",
+        "HOW"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [
+          0
+        ],
+        "what": [
+          1
+        ],
+        "when": [],
+        "where": [],
+        "why": [
+          2
+        ],
+        "how": []
+      }
+    },
+    {
+      "Id": "implicit-how-001",
+      "Text": "工程人员先拆除旧雷达，再安装新阵列，系统升级完成。",
+      "Root_Event": {
+        "Event_Id": "E1",
+        "Event_Text": "系统升级完成",
+        "Trigger": {
+          "Tag_Text": "完成",
+          "Tag_Start": 22,
+          "Tag_End": 24
+        }
+      },
+      "Tags": [
+        {
+          "Tag_Text": "工程人员",
+          "Tag_Start": 0,
+          "Tag_End": 4,
+          "5W1H_Label": "WHO",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "系统升级完成",
+          "Tag_Start": 18,
+          "Tag_End": 24,
+          "5W1H_Label": "WHAT",
+          "Evidence_Status": "explicit"
+        },
+        {
+          "Tag_Text": "先拆除旧雷达，再安装新阵列",
+          "Tag_Start": 4,
+          "Tag_End": 17,
+          "5W1H_Label": "HOW",
+          "Evidence_Status": "implicit"
+        }
+      ],
+      "Missing": [
+        "WHEN",
+        "WHERE",
+        "WHY"
+      ],
+      "Event_Hyperedge": {
+        "event": "E1",
+        "who": [
+          0
+        ],
+        "what": [
+          1
+        ],
+        "when": [],
+        "where": [],
+        "why": [],
+        "how": [
+          2
+        ]
+      }
+    }
+  ]
+}
